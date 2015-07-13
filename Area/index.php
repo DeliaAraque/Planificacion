@@ -4,7 +4,7 @@
 
 <div class="row">
 	<div class="col-lg-12">
-		<h1 class="page-header">Área</h1>
+		<h1 class="page-header">Áreas</h1>
 	</div>
 </div>
 
@@ -23,7 +23,7 @@
 <?php
 	require "../../lib/conexion.php";
 
-	$sql = "select nombre from area order by nombre";
+	$sql = "select * from area order by nombre";
 	$exe = pg_query($sigpa, $sql);
 
 	while($area = pg_fetch_object($exe)) {

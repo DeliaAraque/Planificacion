@@ -7,7 +7,7 @@
 
 <div class="row">
 	<div class="col-lg-12">
-		<h1 class="page-header">Área</h1>
+		<h1 class="page-header">Editar área</h1>
 	</div>
 </div>
 
