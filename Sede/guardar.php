@@ -7,6 +7,11 @@
 	$telefono = htmlspecialchars($_POST["telefono"], ENT_QUOTES);
 	$direccion = htmlspecialchars($_POST["direccion"], ENT_QUOTES);
 
+	if($fecha > date("Y-m-d")) {
+		echo "La fecha de inauguración no puede ser mayor a la actual&&error";
+		exit;
+	}
+
 	pg_query($sigpa, "begin");
 
 	$sql = "insert into sede values(default, '$nombre', '$fecha', '$telefono', '$direccion')";
