@@ -30,7 +30,7 @@
 			</div>
 
 			<div class="form-group">
-				<input type="text" name="horas" value="<?= $dedicacion->horas; ?>" placeholder="Horas" class="form-control" data-type="[0-9]" required="required" />
+				<input type="text" name="horas" value="<?= $dedicacion->horas; ?>" placeholder="Horas" class="form-control" data-type="num" required="required" />
 			</div>
 
 			<div class="form-group text-center">

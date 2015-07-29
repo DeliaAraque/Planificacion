@@ -54,7 +54,7 @@
 
 				<tfoot>
 					<tr>
-						<td class="text-center" title="Nueva dedicación" onClick="embem('moduloPlanificacion/Dedicacion/form.html', '#page-wrapper')" style="cursor: pointer" colspan="4"><i class="fa fa-plus fa-fw editar"></i></td>
+						<td class="text-center" title="Nueva dedicación" onClick="embem('moduloPlanificacion/Dedicacion/form.html', '#page-wrapper')" style="cursor: pointer" colspan="3"><i class="fa fa-plus fa-fw editar"></i></td>
 					</tr>
 				</tfoot>
 			</table>
