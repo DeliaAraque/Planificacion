@@ -22,13 +22,13 @@
 		exit;
 	}
 
-	$sql = "select COUNT(id) as n from area where nombre='$nombre'";
+	$sql = "select COUNT(id) as n from sede where nombre='$nombre'";
 	$exe = pg_query($sigpa, $sql);
 	$n = pg_fetch_object($exe);
 	$n = $n->n;
 
 	if($n) {
-		echo "Ya existe un área con ese nombre&&error";
+		echo "Ya existe un sede con ese nombre&&error";
 		exit;
 	}
 
