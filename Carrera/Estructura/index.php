@@ -35,9 +35,7 @@
 								<?= $estructura->nombre; ?>
 							</div>
 
-							<div class="col-xs-5 col-sm-5 col-md-6 col-lg-5 text-center">
-								<i class="fa fa-pencil fa-fw editar" title="Editar" onClick="embem('moduloPlanificacion/Sede/editar.php', '#page-wrapper', 'nombre=<?= $estructura->nombre ?>')"></i>
-								<i class="fa fa-trash-o fa-fw eliminar" onClick="if(confirm('¿Realmente desea eliminar <?= $estructura->nombre ?>?')) sendReq('../../script/eliminar.php', 'tabla=sede&campo=nombre&valor=<?= $estructura->nombre ?>', 'moduloPlanificacion/Sede/index.php')" title="Eliminar"></i>
+							<div class="col-xs-5 col-sm-5 col-md-6 col-lg-5 text-center"> 
 								<i class="fa fa-pencil fa-fw editar" title="Editar" onClick="embem('moduloPlanificacion/Carrera/Estructura/editar.php', '#page-wrapper', 'nombre=<?= $estructura->nombre ?>')"></i>
 								<i class="fa fa-trash-o fa-fw eliminar" onClick="if(confirm('¿Realmente desea eliminar <?= $estructura->nombre ?>?')) sendReq('../../../script/eliminar.php', 'tabla=estructura&campo=nombre&valor=<?= $estructura->nombre ?>', 'moduloPlanificacion/Carrera/Estructura/index.php')" title="Eliminar"></i>
 							</div>

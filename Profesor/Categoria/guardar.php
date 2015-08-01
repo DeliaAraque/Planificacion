@@ -1,6 +1,6 @@
 <?php
-	require "../../script/verifSesion.php";
-	require "../../lib/conexion.php";
+	require "../../../script/verifSesion.php";
+	require "../../../lib/conexion.php";
 
 	$id = htmlspecialchars($_POST["id"], ENT_QUOTES);
 	$nombre = htmlspecialchars($_POST["nombre"], ENT_QUOTES);

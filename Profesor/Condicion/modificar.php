@@ -1,6 +1,6 @@
 <?php
-	require "../../script/verifSesion.php";
-	require "../../lib/conexion.php";
+	require "../../../script/verifSesion.php";
+	require "../../../lib/conexion.php";
 
 	$nombre = htmlspecialchars($_POST["nombre"], ENT_QUOTES);
 	$nombreAnt = htmlspecialchars($_POST["nombreAnt"], ENT_QUOTES);
@@ -10,23 +10,23 @@
 		exit;
 	}
 
-	$sql = "select COUNT(id) as n from area where nombre='$nombre'";
+	$sql = "select COUNT(id) as n from condicion where nombre='$nombre'";
 	$exe = pg_query($sigpa, $sql);
 	$n = pg_fetch_object($exe);
 	$n = $n->n;
 
 	if($n) {
-		echo "Ya existe un área con ese nombre&&error";
+		echo "Ya existe un condición con ese nombre&&error";
 		exit;
 	}
 
 	pg_query($sigpa, "begin");
 
-	$sql = "update area set nombre='$nombre' where nombre='$nombreAnt'";
+	$sql = "update condicion set nombre='$nombre' where nombre='$nombreAnt'";
 	$exe = pg_query($sigpa, $sql);
 
 	if($exe) {
-		$sql = "insert into historial values('" . time() . "', '$_SESSION[nombre] $_SESSION[apellido] ($_SESSION[cedula])', 'Se modificó el área <strong>$nombreAnt</strong> por <strong>$nombre</strong>', '" . htmlspecialchars($sql, ENT_QUOTES) . "')";
+		$sql = "insert into historial values('" . time() . "', '$_SESSION[nombre] $_SESSION[apellido] ($_SESSION[cedula])', 'Se modificó la condición <strong>$nombreAnt</strong> por <strong>$nombre</strong>', '" . htmlspecialchars($sql, ENT_QUOTES) . "')";
 		$exe = pg_query($sigpa, $sql);
 		
 		echo "Se modificó satisfactóriamente&&success";

@@ -1,6 +1,6 @@
 <?php
-	require "../../script/verifSesion.php";
-	require "../../lib/conexion.php";
+	require "../../../script/verifSesion.php";
+	require "../../../lib/conexion.php";
 
 	$id = $_POST["id"];
 
@@ -17,7 +17,7 @@
 
 <div class="row">
 	<div class="col-lg-12">
-		<form name="categoria" method="POST" action="moduloPlanificacion/Categoria/modificar.php" data-exe="embem('moduloPlanificacion/Categoria/index.php', '#page-wrapper')" role="form">
+		<form name="categoria" method="POST" action="moduloPlanificacion/Profesor/Categoria/modificar.php" data-exe="embem('moduloPlanificacion/Profesor/Categoria/index.php', '#page-wrapper')" role="form">
 			<div class="form-group">
 				<input type="text" name="id" placeholder="Abreviatura" class="form-control" data-type="text" onKeyUp="Verif(this)" value="<?= $id; ?>" required="required" />
 				<input type="hidden" name="idAnt" value="<?= $id; ?>" />
@@ -31,7 +31,7 @@
 
 			<div class="form-group text-center">
 				<input type="submit" value="Guardar" class="btn btn-lg btn-primary" />
-				<input type="button" value="Cancelar" class="btn btn-lg" onClick="embem('moduloPlanificacion/Categoria/index.php', '#page-wrapper')" />
+				<input type="button" value="Cancelar" class="btn btn-lg" onClick="embem('moduloPlanificacion/Profesor/Categoria/index.php', '#page-wrapper')" />
 			</div>
 		</form>
 	</div>
