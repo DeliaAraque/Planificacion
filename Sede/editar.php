@@ -19,22 +19,28 @@
 	<div class="col-lg-12">
 		<form name="sede" method="POST" action="moduloPlanificacion/Sede/modificar.php" data-exe="embem('moduloPlanificacion/Sede/index.php', '#page-wrapper')" role="form">
 			<div class="form-group">
-				<input type="text" name="nombre" value="<?= $nombre; ?>" placeholder="Nombre" class="form-control" data-type="text" data-msg="Solo se permiten números y guiones" onKeyUp="Verif(this)" required="required" />
+				Nombre:
+				<input type="text" name="nombre" placeholder="Nombre" value="<?= $nombre; ?>" class="form-control" onKeyUp="if(this.value != document.sede.nombreAnt.value) Verif(this)" pattern="^[A-ZÁÉÍÓÚÑ][a-záéíóúñ]*( [A-ZÁÉÍÓÚÑ][a-záéíóúñ]*)*$" required="required" />
 				<input type="hidden" name="nombreAnt" value="<?= $nombre; ?>" />
-				<p class="help-block">Debe indicar el nombre de la sede, por ejemplo: Ejido.</p>
+				<p class="help-block">Solo están permitidos caracteres alfabéticos y las primeras letras deben estar en mayúscula. Ej: Ejido.</p>
 			</div>
 
 			<div class="form-group">
-				<input type="date" name="fecha" value="<?= $sede->fecha; ?>" placeholder="Fecha de inauguración" class="form-control" data-type="[0-9-]" data-msg="Solo se permiten números y guiones" required="required" />
-				<p class="help-block">Debe indicar la fecha en que se inauguró la sede, por ejemplo: 2015-12-31.</p>
+				Fecha de inauguración:
+				<input type="text" name="fecha" placeholder="Fecha de inauguración" value="<?php $fecha = explode("-", $sede->fecha); echo "$fecha[2]/$fecha[1]/$fecha[0]"; ?>" class="form-control datePicker" pattern="^((0?[1-9]|[12][0-9])/0?2|((0?[1-9]|[12][0-9])|30)/(0?4|0?6|0?9|11)|((0?[1-9]|[12][0-9])|3[01])/(0?1|0?3|0?5|0?7|0?8|10|12))/[0-9]+$" required="required" />
+				<p class="help-block">La fecha debe cumplir el formato Día/Mes/Año, Ej: 03/03/2009.</p>
 			</div>
 
 			<div class="form-group">
-				<input type="text" name="telefono" value="<?= $sede->telefono; ?>" placeholder="Teléfono" class="form-control" data-type="[0-9+-]" data-msg="Solo se permiten caracteres válidos para números telefónicos" required="required" />
+				Teléfono:
+				<input type="tel" placeholder="Teléfono" name="telefono" value="<?= $sede->telefono; ?>" class="form-control" pattern="^[0-9]{4}\-?[0-9]{7}$" required="required" />
+				<p class="help-block">El número de teléfono debe cumplir el formato Código-Número, Ej: 0274-2210746.</p>
 			</div>
 
 			<div class="form-group">
-				<textarea name="direccion" class="form-control" rows="2" placeholder="Dirección" required="required"><?= $sede->direccion; ?></textarea>
+				Dirección:
+				<textarea name="direccion" placeholder="Dirección" rows="2" class="form-control" required="required"><?= $sede->direccion; ?></textarea>
+				<p class="help-block">Ej: Av. Monseñor Duque, Ejido.</p>
 			</div>
 
 			<div class="form-group text-center">

@@ -15,9 +15,10 @@
 	<div class="col-lg-12">
 		<form name="area" method="POST" action="moduloPlanificacion/Area/modificar.php" data-exe="embem('moduloPlanificacion/Area/index.php', '#page-wrapper')" role="form">
 			<div class="form-group">
-				<input type="text" name="nombre" placeholder="Nombre" class="form-control" data-type="text" onKeyUp="Verif(this)" value="<?= $nombre; ?>" required="required" />
+				Nombre:
+				<input type="text" name="nombre" placeholder="Nombre" value="<?= $nombre; ?>" class="form-control" onKeyUp="if(this.value != document.area.nombreAnt.value) Verif(this)" pattern="^[A-ZÁÉÍÓÚÑ][a-záéíóúñ]*( [A-ZÁÉÍÓÚÑ][a-záéíóúñ]*)*$" required="required" />
 				<input type="hidden" name="nombreAnt" value="<?= $nombre; ?>" />
-				<p class="help-block">Debe indicar el nombre del área, por ejemplo: Tecnología.</p>
+				<p class="help-block">Solo están permitidos caracteres alfabéticos y las primeras letras deben estar en mayúscula. Ej: Tecnología</p>
 			</div>
 
 			<div class="form-group text-center">

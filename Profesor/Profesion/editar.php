@@ -15,9 +15,10 @@
 	<div class="col-lg-12">
 		<form name="profesion" method="POST" action="moduloPlanificacion/Profesor/Profesion/modificar.php" data-exe="embem('moduloPlanificacion/Profesor/Profesion/index.php', '#page-wrapper')" role="form">
 			<div class="form-group">
-				<input type="text" name="nombre" placeholder="Nombre" class="form-control" data-type="text" onKeyUp="Verif(this)" value="<?= $nombre; ?>" required="required" />
+				Nombre:
+				<input type="text" name="nombre" placeholder="Nombre" value="<?= $nombre; ?>" class="form-control" pattern="^[A-ZÁÉÍÓÚÑ][a-záéíóúñA-ZÁÉÍÓÚÑ]*( [a-záéíóúñA-ZÁÉÍÓÚÑ]+)*$" onKeyUp="if(this.value != document.profesion.idAnt.value) Verif(this)" required="required" />
 				<input type="hidden" name="nombreAnt" value="<?= $nombre; ?>" />
-				<p class="help-block">Debe indicar el nombre de la profesión, por ejemplo: T.S.U. Construcción Civil.</p>
+				<p class="help-block">Solo están permitidos caracteres alfabéticos y el primero debe estar en mayúculas, el uso de las mismas en los demás caracteres viene dado según su criterio. Ej: TSU Construcción Civil.</p>
 			</div>
 
 			<div class="form-group text-center">

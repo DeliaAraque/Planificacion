@@ -56,7 +56,7 @@
 
 				<tfoot>
 					<tr>
-						<td class="text-center" title="Nuevo profesor" onClick="embem('moduloPlanificacion/Profesor/form.html', '#page-wrapper')" style="cursor: pointer" colspan="4"><i class="fa fa-plus fa-fw editar"></i></td>
+						<td class="text-center" title="Nuevo profesor" onClick="embem('moduloPlanificacion/Profesor/form.php', '#page-wrapper')" style="cursor: pointer" colspan="4"><i class="fa fa-plus fa-fw editar"></i></td>
 					</tr>
 				</tfoot>
 			</table>

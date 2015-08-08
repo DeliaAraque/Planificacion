@@ -19,14 +19,17 @@
 	<div class="col-lg-12">
 		<form name="categoria" method="POST" action="moduloPlanificacion/Profesor/Categoria/modificar.php" data-exe="embem('moduloPlanificacion/Profesor/Categoria/index.php', '#page-wrapper')" role="form">
 			<div class="form-group">
-				<input type="text" name="id" placeholder="Abreviatura" class="form-control" data-type="text" onKeyUp="Verif(this)" value="<?= $id; ?>" required="required" />
+				Abreviatura:
+				<input type="text" name="id" placeholder="Abreviatura" value="<?= $id; ?>" class="form-control" pattern="^[a-záéíóúñA-ZÁÉÍÓÚÑ0-9]+$" onKeyUp="if(this.value != document.categoria.idAnt.value) Verif(this)" required="required" />
 				<input type="hidden" name="idAnt" value="<?= $id; ?>" />
-				<p class="help-block">Debe indicar el nombre de la abreviatura, por ejemplo: Inst</p>
+				<p class="help-block">Solo están permitidos caracteres alfanuméricos sin espacios. Ej: Inst.</p>
 			</div>
 
 			<div class="form-group">
-				<input type="text" name="nombre" placeholder="Nombre" class="form-control" data-type="text" onKeyUp="Verif(this)" value="<?= $categoria->nombre; ?>" required="required" />
-				<p class="help-block">Debe indicar el nombre de la categoría, por ejemplo: Instructor.</p>
+				Nombre:
+				<input type="text" name="nombre" placeholder="Nombre" value="<?= $categoria->nombre; ?>" class="form-control" pattern="^[A-ZÁÉÍÓÚÑ][a-záéíóúñ]*( [A-ZÁÉÍÓÚÑ][a-záéíóúñ]*)*$" onKeyUp="if(this.value != document.categoria.nombreAnt.value) Verif(this)" required="required" />
+				<input type="hidden" name="nombreAnt" value="<?= $categoria->nombre; ?>" />
+				<p class="help-block">Solo están permitidos caracteres alfabéticos y las primeras letras deben estar en mayúscula. Ej: Instructor.</p>
 			</div>
 
 			<div class="form-group text-center">

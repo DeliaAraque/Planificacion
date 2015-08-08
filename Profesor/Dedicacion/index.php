@@ -41,7 +41,7 @@
 
 							<div class="col-xs-5 col-sm-5 col-md-6 col-lg-5 text-center">
 								<i class="fa fa-pencil fa-fw editar" title="Editar" onClick="embem('moduloPlanificacion/Profesor/Dedicacion/editar.php', '#page-wrapper', 'id=<?= $dedicacion->id ?>')"></i>
-								<i class="fa fa-trash-o fa-fw eliminar" onClick="if(confirm('¿Realmente desea eliminar <?= $dedicacion->id ?>?')) sendReq('../../../script/eliminar.php', 'tabla=dedicacion&campo=id&valor=<?= $dedicacion->id ?>', 'moduloPlanificacion/Profesor/Dedicacion/index.php')" title="Eliminar"></i>
+								<i class="fa fa-trash-o fa-fw eliminar" onClick="if(confirm('¿Realmente desea eliminar <?= $dedicacion->nombre ?>?')) sendReq('../../../script/eliminar.php', 'tabla=dedicacion&campo=id&valor=<?= $dedicacion->id ?>', 'moduloPlanificacion/Profesor/Dedicacion/index.php')" title="Eliminar"></i>
 							</div>
 						</div></td>
 					</tr>

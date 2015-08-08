@@ -39,7 +39,7 @@
 
 							<div class="col-xs-4 col-sm-3 col-md-3 col-lg-3 text-center">
 								<i class="fa fa-pencil fa-fw editar" title="Editar" onClick="embem('moduloPlanificacion/Profesor/Categoria/editar.php', '#page-wrapper', 'id=<?= $categoria->id ?>')"></i>
-								<i class="fa fa-trash-o fa-fw eliminar" onClick="if(confirm('¿Realmente desea eliminar <?= $categoria->id ?>?')) sendReq('../../../script/eliminar.php', 'tabla=categoria&campo=id&valor=<?= $categoria->id ?>', 'moduloPlanificacion/Profesor/Categoria/index.php')" title="Eliminar"></i>
+								<i class="fa fa-trash-o fa-fw eliminar" onClick="if(confirm('¿Realmente desea eliminar <?= $categoria->nombre ?>?')) sendReq('../../../script/eliminar.php', 'tabla=categoria&campo=id&valor=<?= $categoria->id ?>', 'moduloPlanificacion/Profesor/Categoria/index.php')" title="Eliminar"></i>
 							</div>
 						</div></td>
 					</tr>

@@ -15,7 +15,8 @@
 	<div class="col-lg-12">
 		<form name="condicion" method="POST" action="moduloPlanificacion/Profesor/Condicion/modificar.php" data-exe="embem('moduloPlanificacion/Profesor/Condicion/index.php', '#page-wrapper')" role="form">
 			<div class="form-group">
-				<input type="text" name="nombre" placeholder="Nombre" class="form-control" data-type="text" onKeyUp="Verif(this)" value="<?= $nombre; ?>" required="required" />
+				Nombre:
+				<input type="text" name="nombre" placeholder="Nombre" value="<?= $nombre; ?>" class="form-control" pattern="^[A-ZÁÉÍÓÚÑ][a-záéíóúñ]*( [A-ZÁÉÍÓÚÑ][a-záéíóúñ]*)*$" onKeyUp="if(this.value != document.condicion.nombreAnt.value) Verif(this)" required="required" />
 				<input type="hidden" name="nombreAnt" value="<?= $nombre; ?>" />
 				<p class="help-block">Debe indicar el nombre de la condición, por ejemplo: Contratado.</p>
 			</div>

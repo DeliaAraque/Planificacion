@@ -34,7 +34,7 @@
 
 					<tr>
 						<td><?= $sede->nombre; ?></td>
-						<td><?= $sede->fecha; ?></td>
+						<td><?php $fecha = explode("-", $sede->fecha); echo "$fecha[2]/$fecha[1]/$fecha[0]"; ?></td>
 						<td><?= $sede->telefono; ?></td>
 						<td><div class="row">
 							<div class="col-xs-7 col-sm-7 col-md-6 col-lg-7">
