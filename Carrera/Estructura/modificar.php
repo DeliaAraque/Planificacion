@@ -6,21 +6,24 @@
 
 	$re = "^[A-ZÁÉÍÓÚÑ][a-záéíóúñA-ZÁÉÍÓÚÑ]*( [a-záéíóúñA-ZÁÉÍÓÚÑ]+)*$";
 
-	if(! ereg("$re", $_POST["nombre"])) {
+	if((! ereg("$re", $_POST["nombre"])) || (! ereg("$re", $_POST["nombreAnt"]))) {
 		echo "El nombre indicado no cumple con el patrón necesario";
 		exit;
 	}
 
 	$nombre = $_POST["nombre"];
+	$nombreAnt = $_POST["nombreAnt"];
 
-	$sql = "select COUNT(id) as n from estructura where nombre='$nombre'";
-	$exe = pg_query($sigpa, $sql);
-	$n = pg_fetch_object($exe);
-	$n = $n->n;
+	if($nombre != $nombreAnt) {
+		$sql = "select COUNT(id) as n from estructura where nombre='$nombre'";
+		$exe = pg_query($sigpa, $sql);
+		$n = pg_fetch_object($exe);
+		$n = $n->n;
 
-	if($n) {
-		echo "Ya existe una estructura con ese nombre";
-		exit;
+		if($n) {
+			echo "Ya existe una estructura con ese nombre";
+			exit;
+		}
 	}
 
 	if(!is_numeric($_POST["cantidad"])) {
@@ -156,32 +159,41 @@
 		}
 	";
 
+	$sql = "select estructura from estructura where nombre='$nombre'";
+	$exe = pg_query($sigpa, $sql);
+	$estructuraAnt = pg_fetch_object($exe);
+
+	if(($nombre == $nombreAnt) && ($estructura == $estructuraAnt->estructura)) {
+		echo "No se hizo ningún cambio&&info";
+		exit;
+	}
+
 // --------------------
 
 	pg_query($sigpa, "begin");
 
-	$sql = "insert into estructura values(default, '$nombre', '$estructura')";
+	$sql = "update estructura set nombre='$nombre', estructura='$estructura' where nombre='$nombreAnt'";
 	$exe = pg_query($sigpa, $sql);
 
-// Si se guardó la estructura correctamente
+// Si se modificó la estructura correctamente
 
 	if($exe) {
 
 	// Agregar elemento al registro de acciones realizadas
 
-		$sql = "insert into historial values('" . time() . "', '$_SESSION[nombre] $_SESSION[apellido] ($_SESSION[cedula])', 'Se agregó la estructura <strong>$nombre</strong>', '" . htmlspecialchars($sql, ENT_QUOTES) . "')";
+		$sql = "insert into historial values('" . time() . "', '$_SESSION[nombre] $_SESSION[apellido] ($_SESSION[cedula])', 'Se modificó la estructura <strong>$nombreAnt</strong>', '" . htmlspecialchars($sql, ENT_QUOTES) . "')";
 		$exe = pg_query($sigpa, $sql);
 
 	// --------------------
 		
-		echo "Se guardó satisfactóriamente&&success";
+		echo "Se modificó satisfactóriamente&&success";
 		pg_query($sigpa, "commit");
 		exit;
 	}
 
 // --------------------
 
-// Si ocurrio un error guardando la estructura
+// Si ocurrio un error modificando la estructura
 
 	echo "Ocurrió un error mientras el servidor intentaba guardar la información, por favor vuelva a intentarlo y si el error persiste comuníquelo al administrador del sistema&&error";
 	pg_query($sigpa, "rollback");
