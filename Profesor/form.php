@@ -1,3 +1,7 @@
+<?php
+	require "../../script/verifSesion.php";
+?>
+
 <div class="row">
 	<div class="col-lg-12">
 		<h1 class="page-header">Nuevo profesor</h1>
@@ -83,8 +87,6 @@
 					<option value=""> Profesión </option>
 
 <?php
-	require "../../lib/conexion.php";
-
 	$sql="select * from profesion order by nombre";
 	$exe=pg_query($sigpa, $sql);
 

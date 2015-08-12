@@ -58,9 +58,14 @@
 // Si se guardo la sede correctamente
 
 	if($exe) {
+
+	// Agregar elemento al registro de acciones realizadas
+
 		$sql = "insert into historial values('" . time() . "', '$_SESSION[nombre] $_SESSION[apellido] ($_SESSION[cedula])', 'Se agregó la sede <strong>$nombre</strong>', '" . htmlspecialchars($sql, ENT_QUOTES) . "')";
 		$exe = pg_query($sigpa, $sql);
-		
+
+	// --------------------
+
 		echo "Se guardó satisfactóriamente&&success";
 		pg_query($sigpa, "commit");
 		exit;
