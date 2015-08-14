@@ -24,27 +24,34 @@
 <?php
 	require "../../lib/conexion.php";
 
-	$sql = "select * from carrera order by nombre";
+	$sql = "
+		select c.id as id, c.nombre as nombre, a.nombre as area
+		from carrera as c
+			join area as a on a.id=c.\"idArea\"
+		order by c.nombre
+	";
 	$exe = pg_query($sigpa, $sql);
 
 	while($carrera = pg_fetch_object($exe)) {
 ?>
 
 					<tr>
-						<td><?= $carrera->nombre; ?></td>
-						<td><div class="row">
-							<div class="col-xs-7 col-sm-7 col-md-6 col-lg-7">
+						<td>
+							<?= $carrera->nombre; ?>
 
 <?php
-		$sql = "select nombre from area where id='$carrera->idArea'";
+		$sql = "select count(id) as n from \"carreraSede\" where \"idCarrera\"='$carrera->id'";
 		$exe2 = pg_query($sigpa, $sql);
+		$ncs = pg_fetch_object($exe2);
 
-		$area = pg_fetch_object($exe2);
-
-		echo $area->nombre;
+		if(!$ncs->n)
+			echo "&nbsp;&nbsp;<i class=\"fa fa-exclamation-triangle alerta\" onClick=\"embem('moduloPlanificacion/Carrera/editar.php', '#page-wrapper', 'nombre=$carrera->nombre')\" title=\"Esta carrera necesita ser completada\"></i>";
 ?>
 
-							</div>
+						</td>
+
+						<td><div class="row">
+							<div class="col-xs-7 col-sm-7 col-md-6 col-lg-7"><?= $carrera->area; ?></div>
 
 							<div class="col-xs-5 col-sm-5 col-md-6 col-lg-5 text-center"> 
 								<i class="fa fa-search fa-fw consultar" title="Mas información" onClick="moreInfo('moduloPlanificacion/Carrera/consultar.php', 'nombre=<?= $carrera->nombre ?>')"></i>
