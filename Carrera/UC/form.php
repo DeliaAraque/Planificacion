@@ -22,6 +22,10 @@
 			</div>
 
 			<div class="form-group">
+				<label class="checkbox-inline"><input type="checkbox" name="renombrable" value="1"> Renombrable </label>
+			</div>
+
+			<div class="form-group">
 				<select name="carrera" class="form-control" required="required">
 					<option value="">Carrera</option>
 

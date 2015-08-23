@@ -17,7 +17,7 @@
 						<th>Nombre</th>
 						<th>Código</th>
 						<th>Carrera</th>
-						<th>Éje</th>
+						<th>Eje</th>
 					</tr>
 				</thead>
 
@@ -48,8 +48,8 @@
 							</div>
 
 							<div class="col-xs-5 col-sm-5 col-md-6 col-lg-5 text-center">
-								<i class="fa fa-pencil fa-fw editar" title="Editar" onClick="embem('moduloPlanificacion/Carrera/UC/editar.php', '#page-wrapper', 'nombre=<?= $uc->nombre ?>')"></i>
-								<i class="fa fa-trash-o fa-fw eliminar" onClick="if(confirm('¿Realmente desea eliminar <?= $uc->nombre ?>?')) sendReq('../../../script/eliminar.php', 'tabla=unidadCurricular&campo=nombre&valor=<?= $uc->nombre ?>', 'moduloPlanificacion/Carrera/UC/index.php')" title="Eliminar"></i>
+								<i class="fa fa-pencil fa-fw editar" title="Editar" onClick="embem('moduloPlanificacion/Carrera/UC/editar.php', '#page-wrapper', 'id=<?= $uc->id ?>')"></i>
+								<i class="fa fa-trash-o fa-fw eliminar" onClick="if(confirm('¿Realmente desea eliminar <?= $uc->nombre ?>?')) sendReq('../../../script/eliminar.php', 'tabla=unidadCurricular&campo=id&valor=<?= $uc->id ?>', 'moduloPlanificacion/Carrera/UC/index.php')" title="Eliminar"></i>
 							</div>
 						</div></td>
 					</tr>

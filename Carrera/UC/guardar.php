@@ -55,6 +55,8 @@
 		exit;
 	}
 
+	$renombrable = (! isset($_POST["renombrable"])) ? "false" : "true";
+
 	$eje = htmlspecialchars($_POST["eje"], ENT_QUOTES);
 
 	$sql = "select id from eje where id='$eje'";
@@ -72,7 +74,7 @@
 
 	pg_query($sigpa, "begin");
 
-	$sql = "insert into \"unidadCurricular\" values('$id', '$nombre', '$carrera', '$eje')";
+	$sql = "insert into \"unidadCurricular\" values('$id', '$nombre', $renombrable, '$carrera', '$eje')";
 	$exe = pg_query($sigpa, $sql);
 
 // Si se guardo la unidad curricular correctamente

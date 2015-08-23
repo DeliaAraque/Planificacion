@@ -72,6 +72,8 @@
 		}
 	}
 
+	$renombrable = (! isset($_POST["renombrable"])) ? "f" : "t";
+
 	$eje = htmlspecialchars($_POST["eje"], ENT_QUOTES);
 
 	$sql = "select id from eje where id='$eje'";
@@ -89,16 +91,18 @@
 	$exe = pg_query($sigpa, $sql);
 	$ucAnt = pg_fetch_object($exe);
 
-	if(($id == $ucAnt->id) && ($nombre == $ucAnt->nombre) && ($carrera == $ucAnt->idCarrera) && ($eje == $ucAnt->idEje)) {
+	if(($id == $ucAnt->id) && ($nombre == $ucAnt->nombre) && ($renombrable == $ucAnt->renombrable) && ($carrera == $ucAnt->idCarrera) && ($eje == $ucAnt->idEje)) {
 		echo "No se hizo ningún cambio&&info";
 		exit;
 	}
+
+	$renombrable = (! isset($_POST["renombrable"])) ? "false" : "true";
 
 // --------------------
 
 	pg_query($sigpa, "begin");
 
-	$sql = "update \"unidadCurricular\" set id='$id', nombre='$nombre', \"idCarrera\"='$carrera', \"idEje\"='$eje' where id='$idAnt'";
+	$sql = "update \"unidadCurricular\" set id='$id', nombre='$nombre', renombrable=$renombrable, \"idCarrera\"='$carrera', \"idEje\"='$eje' where id='$idAnt'";
 	$exe = pg_query($sigpa, $sql);
 
 // Si se modificó la unidad curricular

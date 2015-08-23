@@ -2,9 +2,9 @@
 	require "../../../script/verifSesion.php";
 	require "../../../lib/conexion.php";
 
-	$nombre = $_POST["nombre"];
+	$id = $_POST["id"];
 
-	$sql = "select * from \"unidadCurricular\" where nombre='$nombre'";
+	$sql = "select * from \"unidadCurricular\" where id='$id'";
 	$exe = pg_query($sigpa, $sql);
 	$uc = pg_fetch_object($exe);
 ?>
@@ -30,6 +30,10 @@
 				<input type="text" name="nombre" placeholder="Nombre" value="<?= $uc->nombre; ?>" class="form-control" pattern="^[A-ZÁÉÍÓÚÑ][a-záéíóúñA-ZÁÉÍÓÚÑ]*( [a-záéíóúñA-ZÁÉÍÓÚÑ]+)*$" required="required" />
 				<input type="hidden" name="nombreAnt" value="<?= $uc->nombre; ?>" />
 				<p class="help-block">Solo están permitidos caracteres alfabéticos y el primero debe estar en mayúculas, el uso de las mismas en los demás caracteres viene dado según su criterio. Ej: Algorítmica y Programación.</p>
+			</div>
+
+			<div class="form-group">
+				<label class="checkbox-inline"><input type="checkbox" name="renombrable" value="1" <?php if($uc->renombrable == "t") echo "checked=\"checked\""; ?>> Renombrable </label>
 			</div>
 
 			<div class="form-group">
