@@ -14,6 +14,7 @@
 			<table class="table table-striped table-bordered table-hover dataTable">
 				<thead>
 					<tr>
+						<th></th>
 						<th>Nombre</th>
 						<th>Área</th>
 					</tr>
@@ -37,19 +38,23 @@
 
 					<tr>
 						<td>
-							<?= $carrera->nombre; ?>
 
 <?php
-		$sql = "select count(id) as n from \"carreraSede\" where \"idCarrera\"='$carrera->id'";
+		$sql = "
+			select count(ecs.id) as n 
+			from \"carreraSede\" as cs 
+				join \"estructuraCS\" as ecs on ecs.\"idCS\"=cs.id 
+			where cs.\"idCarrera\"='$carrera->id'
+		";
 		$exe2 = pg_query($sigpa, $sql);
 		$ncs = pg_fetch_object($exe2);
 
 		if(!$ncs->n)
-			echo "&nbsp;&nbsp;<i class=\"fa fa-exclamation-triangle alerta\" onClick=\"embem('moduloPlanificacion/Carrera/editar.php', '#page-wrapper', 'nombre=$carrera->nombre')\" title=\"Esta carrera necesita ser completada\"></i>";
+			echo "<i class=\"fa fa-exclamation-triangle alerta\" onClick=\"embem('moduloPlanificacion/Carrera/editar.php', '#page-wrapper', 'nombre=$carrera->nombre')\" title=\"Esta carrera necesita ser completada\"></i>";
 ?>
 
 						</td>
-
+						<td><?= $carrera->nombre; ?></td>
 						<td><div class="row">
 							<div class="col-xs-7 col-sm-7 col-md-6 col-lg-7"><?= $carrera->area; ?></div>
 
@@ -69,7 +74,7 @@
 
 				<tfoot>
 					<tr>
-						<td class="text-center" title="Nueva carrera" onClick="embem('moduloPlanificacion/Carrera/form.php', '#page-wrapper')" style="cursor: pointer" colspan="2"><i class="fa fa-plus fa-fw agregar"></i></td>
+						<td class="text-center" title="Nueva carrera" onClick="embem('moduloPlanificacion/Carrera/form.php', '#page-wrapper')" style="cursor: pointer" colspan="3"><i class="fa fa-plus fa-fw agregar"></i></td>
 					</tr>
 				</tfoot>
 			</table>

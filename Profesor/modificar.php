@@ -6,21 +6,24 @@
 
 	$re = "^[0-9]{7,}$";
 
-	if(! ereg("$re", $_POST["cedula"])) {
+	if((! ereg("$re", $_POST["cedula"])) || (! ereg("$re", $_POST["cedulaAnt"]))) {
 		echo "El número de cédula no cumple con el patrón necesario";
 		exit;
 	}
 
 	$cedula = $_POST["cedula"];
+	$cedulaAnt = $_POST["cedulaAnt"];
 
-	$sql = "select COUNT(cedula) as n from profesor where cedula='$cedula'";
-	$exe = pg_query($sigpa, $sql);
-	$n = pg_fetch_object($exe);
-	$n = $n->n;
+	if($cedula != $cedulaAnt) {
+		$sql = "select COUNT(cedula) as n from profesor where cedula='$cedula'";
+		$exe = pg_query($sigpa, $sql);
+		$n = pg_fetch_object($exe);
+		$n = $n->n;
 
-	if($n) {
-		echo "Ya existe un profesor con esa cédula";
-		exit;
+		if($n) {
+			echo "Ya existe un profesor con esa cédula";
+			exit;
+		}
 	}
 
 	$re = "^[A-ZÁÉÍÓÚÑ][a-záéíóúñ]*( [A-ZÁÉÍÓÚÑ][a-záéíóúñ]*)*$";
@@ -184,20 +187,20 @@
 
 	pg_query($sigpa, "begin");
 
-	$sql = "insert into persona values('$cedula', '$nombre', $segundoNombre, '$apellido', $segundoApellido, '$sexo', '$correo', '$direccion', '$telefono', $telefonoFijo)";
+	$sql = "update persona set cedula='$cedula', nombre='$nombre', \"segundoNombre\"=$segundoNombre, apellido='$apellido', \"segundoApellido\"=$segundoApellido, sexo='$sexo', correo='$correo', direccion='$direccion', telefono='$telefono', \"telefonoFijo\"=$telefonoFijo where cedula='$cedulaAnt'";
 	$exe = pg_query($sigpa, $sql);
 
-// Si se guardo la persona correctamente
+// Si se modificó la persona correctamente
 
 	if($exe) {
 
-	// Se guardan los datos del profesor
+	// Se modifican los datos del profesor
 
-		$sql2 = "insert into profesor values('$cedula', '$categoria', '$condicion', '$dedicacion', '$profesion')";
+		$sql2 = "update profesor set cedula='$cedula', categoria='$categoria', condicion='$condicion', dedicacion='$dedicacion', profesion='$profesion' where cedula='$cedulaAnt'";
 		$exe = pg_query($sigpa, $sql2);
 
 		if(! $exe) {
-			echo "Ocurrió un error mientras el servidor intentaba guardar la información, por favor vuelva a intentarlo y si el error persiste comuníquelo al administrador del sistema&&error";
+			echo "Ocurrió un error mientras el servidor intentaba modificar la información, por favor vuelva a intentarlo y si el error persiste comuníquelo al administrador del sistema&&error";
 			pg_query($sigpa, "rollback");
 		}
 
@@ -205,7 +208,7 @@
 
 	// Agregar elemento al registro de acciones realizadas
 
-		$sql = "insert into historial values('" . time() . "', '$_SESSION[nombre] $_SESSION[apellido] ($_SESSION[cedula])', 'Se agregó al profesor <strong>$nombre $apellido ($cedula)</strong>', '" . htmlspecialchars($sql, ENT_QUOTES) . "\n\n" . htmlspecialchars($sql2, ENT_QUOTES) . "')";
+		$sql = "insert into historial values('" . time() . "', '$_SESSION[nombre] $_SESSION[apellido] ($_SESSION[cedula])', 'Se modificí al profesor <strong>$nombre $apellido ($cedula)</strong>', '" . htmlspecialchars($sql, ENT_QUOTES) . "\n\n" . htmlspecialchars($sql2, ENT_QUOTES) . "')";
 		$exe = pg_query($sigpa, $sql);
 
 	// --------------------
@@ -213,7 +216,18 @@
 	// Si el proceso lo hace un usuario con privilegios administrativos
 
 		if(! isset($_SESSION["carrera"])) {
+			$wherePer = "";
+
 			foreach($carreras as $carrera) {
+				$wherePer .= " and \"idCS\"!='$carrera'";
+
+				$sql = "select count(*) as n from pertenece where \"idProfesor\"='$cedula' and \"idCS\"='$carrera'";
+				$exe = pg_query($sigpa, $sql);
+				$cs = pg_fetch_object($exe);
+
+				if($cs->n)
+					continue;
+
 				$sql = "insert into pertenece values('$carrera', '$cedula')";
 				$exe = pg_query($sigpa, $sql);
 
@@ -222,20 +236,23 @@
 					pg_query($sigpa, "rollback");
 				}
 			}
+
+			$sql = "delete from pertenece where \"idProfesor\"='$cedula' $wherePer";
+			$exe = pg_query($sigpa, $sql);
 		}
 
 	// --------------------
 
-		echo "Se guardó satisfactóriamente&&success";
+		echo "Se modificó satisfactóriamente&&success";
 		pg_query($sigpa, "commit");
 		exit;
 	}
 
 // --------------------
 
-// Si ocurrio un error guardando la persona
+// Si ocurrio un error modificando la persona
 
-	echo "Ocurrió un error mientras el servidor intentaba guardar la información, por favor vuelva a intentarlo y si el error persiste comuníquelo al administrador del sistema&&error";
+	echo "Ocurrió un error mientras el servidor intentaba modificar la información, por favor vuelva a intentarlo y si el error persiste comuníquelo al administrador del sistema&&error";
 	pg_query($sigpa, "rollback");
 
 // --------------------
