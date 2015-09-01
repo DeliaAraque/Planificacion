@@ -46,14 +46,37 @@
 	$sql="select id, nombre from estructura order by nombre";
 	$exe=pg_query($sigpa, $sql);
 
-	while($estructura=pg_fetch_object($exe))
+	while($estructura = pg_fetch_object($exe))
 		$estructuras .= "<option value='$estructura->id'>$estructura->nombre</option>";
+
+	$sql="
+		select p.cedula as cedula, p.apellido as apellido, p.nombre as nombre 
+		from persona as p 
+			join profesor as prof on prof.cedula=p.cedula 
+		order by p.apellido, p.nombre, p.cedula
+	";
+	$exe=pg_query($sigpa, $sql);
+
+	while($profesor = pg_fetch_object($exe)) {
+		$sql="select count(\"idCoordinador\") as n from \"carreraSede\" where \"idCoordinador\"='$profesor->cedula'";
+		$exe2=pg_query($sigpa, $sql);
+		$n = pg_fetch_object($exe2);
+
+		if($n->n)
+			continue;
+
+		$profesores .= "<option value='$profesor->cedula'>$profesor->apellido $profesor->nombre ($profesor->cedula)</option>";
+	}
 
 	$sql="select id, nombre from sede order by nombre";
 	$exe=pg_query($sigpa, $sql);
 
+	$n = 0;
+
 	while($sede=pg_fetch_object($exe)) {
 ?>
+
+				<?php if($n) echo "<div class=\"form-group col-xs-12\"><hr/></div>" ?>
 
 				<div class="row">
 					<div class="col-xs-4"><div class="form-group"><?= "<label class=\"checkbox-inline\"><input type=\"checkbox\" name=\"sede[]\" value=\"$sede->id\" onClick=\"estructura(this)\"> $sede->nombre </label>"; ?></div></div>
@@ -63,9 +86,17 @@
 							<?= $estructuras; ?>
 						</select>
 					</div></div>
+					<div class="col-xs-12"><div class="form-group">
+						<select name="coordinador<?= $sede->id; ?>" id="coordinador<?= $sede->id; ?>" class="form-control" onChange="noRepetido(this.value)" required="required" disabled="disabled">
+							<option value="">Coordinador</option>
+							<?= $profesores; ?>
+						</select>
+						<input type="hidden" value="" />
+					</div></div>
 				</div>
 
 <?php
+		++$n;
 	}
 ?>
 
@@ -85,11 +116,33 @@
 <script>
 	function estructura(sede) {
 		var estructuraSelect = $("#estructura" + sede.value);
+		var coordinadorSelect = $("#coordinador" + sede.value);
 
-		if(sede.checked)
+		if(sede.checked) {
 			estructuraSelect.removeAttr("disabled");
+			coordinadorSelect.removeAttr("disabled");
+		}
 
-		else
+		else {
 			estructuraSelect.attr("disabled", "disabled");
+			coordinadorSelect.attr("disabled", "disabled");
+
+			$("#coordinador" + sede.value +" option:first-child").attr("selected", "selected");
+
+			var input = sede.parentNode.parentNode.parentNode.parentNode.querySelector("input[type='hidden']");
+
+			$("select[name^='coordinador'] option[value='" + input.value + "']").removeAttr("disabled");
+			input.value = "";
+		}
+	}
+
+	function noRepetido(cedula) {
+		$("select[name^='coordinador'] option[value='" + $("select:focus + input").attr("value") + "']").removeAttr("disabled");
+
+		if(cedula)
+			$("select[name^='coordinador'] option[value='" + cedula + "']").attr("disabled", "disabled");
+
+		$("select:focus option[value='" + cedula + "']").removeAttr("disabled");
+		$("select:focus + input").attr("value", cedula);
 	}
 </script>

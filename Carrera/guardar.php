@@ -89,6 +89,24 @@
 		}
 
 		$estructuras[] = htmlspecialchars($_POST["estructura$sede"], ENT_QUOTES);
+
+		if(! $_POST["coordinador$sede"]) {
+			echo "Debe asignar un coordinador a la sede $sedeCheck->nombre";
+			exit;
+		}
+
+		$coordinador = htmlspecialchars($_POST["coordinador$sede"], ENT_QUOTES);
+
+		$sql = "select cedula from profesor where cedula='$coordinador'";
+		$exe = pg_query($sigpa, $sql);
+		$coordinador = pg_fetch_object($exe);
+
+		if(!$coordinador->cedula) {
+			echo "Por aquí <strong>NO</strong> pasan inyecciones! :B";
+			exit;
+		}
+
+		$coordinadores[] = htmlspecialchars($_POST["coordinador$sede"], ENT_QUOTES);
 	}
 
 	$sede = $_POST["sede"];
@@ -117,7 +135,7 @@
 
 	// Asignar la sede a la carrera
 
-			$sql = "insert into \"carreraSede\" values(default, '$id', '$idSede') returning id";
+			$sql = "insert into \"carreraSede\" values(default, '$id', '$coordinadores[$n]', '$idSede') returning id";
 			$exe = pg_query($sigpa, $sql);
 
 			$idCS = pg_fetch_object($exe);
@@ -135,6 +153,15 @@
 			}
 
 		// --------------------
+
+			$sql = "select count(\"idCS\") as n from pertenece where \"idCS\"='$idCS->id' and \"idProfesor\"='$coordinadores[$n]'";
+			$exe = pg_query($sigpa, $sql);
+			$nPer = pg_fetch_object($exe);
+
+			if(! $nPer->n) {
+				$sql = "insert into pertenece values('$idCS->id', '$coordinadores[$n]')";
+				$exe = pg_query($sigpa, $sql);
+			}
 
 	// --------------------
 

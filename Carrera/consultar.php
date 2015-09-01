@@ -5,15 +5,10 @@
 	$nombre = $_POST["nombre"];
 
 	$sql = "
-		select c.id as id, c.nombre as nombre, a.nombre as area, string_agg(concat_ws('&', s.nombre, e.nombre), '&&' order by s.nombre, e.nombre) as sedes
-		from carrera as c
+		select c.id as id, c.nombre as nombre, a.nombre as area 
+		from carrera as c 
 			join area as a on a.id=c.\"idArea\"
-			join \"carreraSede\" as cs on cs.\"idCarrera\"=c.id
-			join sede as s on s.id=\"idSede\"
-			join \"estructuraCS\" as ecs on ecs.\"idCS\"=cs.id
-			join estructura as e on e.id=ecs.\"idEstructura\"
 		where c.nombre='$nombre'
-		group by c.id, c.nombre, a.nombre
 	";
 	$exe = pg_query($sigpa, $sql);
 
@@ -31,33 +26,75 @@
 		<strong>Código:</strong> <?= $carrera->id; ?><br/>
 		<strong>Área:</strong> <?= $carrera->area; ?>
 	</div>
-</div><br/>
 
-<table class="table">
-	<thead>
-	<tr>
-		<th>Sede</th>
-		<th>Estructuras</th>
-	</tr>
-	</thead>
+	<div class="col-xs-12">
+		<strong>Sedes:</strong><br/>
 
-	<tbody>
+		<ul>
 
 <?php
-	$sedes = explode("&&", $carrera->sedes);
+	$sql = "
+		select cs.id as id, s.nombre as sede, p.cedula as \"idCoordinador\", p.nombre as \"nombreCoordinador\", p.apellido as \"apellidoCoordinador\" 
+		from \"carreraSede\" as cs 
+			join sede as s on s.id=\"idSede\" 
+			join persona as p on p.cedula=cs.\"idCoordinador\" 
+		where cs.\"idCarrera\"='$carrera->id'
+		order by s.nombre
+	";
+	$exe = pg_query($sigpa, $sql);
 
-	foreach($sedes as $sede) {
-		list($sede, $estructura) = explode("&", $sede);
+	while($cs = pg_fetch_object($exe))
+		echo "<li>$cs->sede, Coordinador: $cs->apellidoCoordinador $cs->nombreCoordinador ($cs->idCoordinador)</li>";
 ?>
 
-	<tr>
-		<td><?= $sede; ?></td>
-		<td><?= $estructura; ?></td>
-	</tr>
+		</ul>
+	</div>
+</div><br/>
+
+<div class="row">
+	<div class="col-xs-12">
+		<h4>Unidades Curriculares:</h4>
+	</div>
+
+	<div class="col-lg-12">
+		<div class="dataTable_wrapper">
+			<table class="table table-striped table-bordered table-hover dataTable">
+			<thead>
+				<tr>
+					<th>Nombre</th>
+					<th>Código</th>
+					<th>Eje</th>
+				</tr>
+			</thead>
+
+			<tbody>
+
+<?php
+	$sql = "
+		select uc.id as id, uc.nombre as nombre, e.nombre as eje
+		from \"unidadCurricular\" as uc 
+			join carrera as c on c.id=uc.\"idCarrera\" 
+			join eje as e on e.id=uc.\"idEje\" 
+		where uc.\"idCarrera\"='$carrera->id' 
+		order by uc.nombre, e.nombre
+	";
+	$exe = pg_query($sigpa, $sql);
+
+	while($uc = pg_fetch_object($exe)) {
+?>
+
+				<tr>
+					<td><?= $uc->nombre; ?></td>
+					<td><?= $uc->id; ?></td>
+					<td><?= $uc->eje; ?></td>
+				</tr>
 
 <?php
 	}
 ?>
 
-	</tbody>
-</table>
+			</tbody>
+			</table>
+		</div>
+	</div>
+</div>

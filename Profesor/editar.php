@@ -5,12 +5,10 @@
 	$cedula = $_POST["cedula"];
 
 	$sql = "
-		select p.cedula as cedula, p.nombre as nombre, p.\"segundoNombre\" as \"segundoNombre\", p.apellido as apellido, p.\"segundoNombre\" as \"segundoNombre\", p.sexo as sexo, p.correo as correo, p.direccion as direccion, p.telefono as telefono, p.\"telefonoFijo\" as \"telefonoFijo\", prof.profesion as profesion, prof.categoria as categoria, prof.dedicacion as dedicacion, prof.condicion as condicion, array_to_string(array_agg(per.\"idCS\"), '&') as carreras
+		select p.cedula as cedula, p.nombre as nombre, p.\"segundoNombre\" as \"segundoNombre\", p.apellido as apellido, p.\"segundoNombre\" as \"segundoNombre\", p.sexo as sexo, p.correo as correo, p.direccion as direccion, p.telefono as telefono, p.\"telefonoFijo\" as \"telefonoFijo\", prof.profesion as profesion, prof.categoria as categoria, prof.dedicacion as dedicacion, prof.condicion as condicion 
 		from persona as p 
 			join profesor as prof on prof.cedula=p.cedula 
-			join pertenece as per on per.\"idProfesor\"=prof.cedula
-		where p.cedula='$cedula' 
-		group by p.cedula, p.nombre, p.\"segundoNombre\", p.apellido, p.\"segundoNombre\", p.sexo, p.correo, p.direccion, p.telefono, p.\"telefonoFijo\", prof.profesion, prof.categoria, prof.dedicacion, prof.condicion
+		where p.cedula='$cedula'
 	";
 	$exe = pg_query($sigpa, $sql);
 	$profesor = pg_fetch_object($exe);
@@ -197,7 +195,19 @@
 				<div class="checkbox">
 
 <?php
-		$auxCarreras = explode("&", $profesor->carreras);
+		$sql = "
+			select per.\"idCS\" as \"idCS\"
+			from persona as p 
+				join profesor as prof on prof.cedula=p.cedula 
+				join pertenece as per on per.\"idProfesor\"=prof.cedula
+			where p.cedula='$cedula' 
+		";
+		$exe = pg_query($sigpa, $sql);
+
+		while($carreras = pg_fetch_object($exe))
+			$auxCarreras[] = $carreras->idCS;
+
+		unset($carreras);
 
 		foreach($auxCarreras as $carrera)
 			$carreras[] = $carrera;

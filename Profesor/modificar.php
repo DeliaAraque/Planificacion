@@ -162,25 +162,22 @@
 	$condicion = htmlspecialchars($_POST["condicion"], ENT_QUOTES);
 
 	if(! isset($_SESSION["carrera"])) {
-		if(! $_POST["carrera"]) {
-			echo "Debe seleccionar al menos una carrera";
-			exit;
-		}
+		if($_POST["carrera"]) {
+			foreach($_POST["carrera"] as $carrera) {
+				$carrera = htmlspecialchars($carrera, ENT_QUOTES);
 
-		foreach($_POST["carrera"] as $carrera) {
-			$carrera = htmlspecialchars($carrera, ENT_QUOTES);
+				$sql = "select count(id) as n from \"carreraSede\" where id='$carrera'";
+				$exe = pg_query($sigpa, $sql);
+				$carrera = pg_fetch_object($exe);
 
-			$sql = "select count(id) as n from \"carreraSede\" where id='$carrera'";
-			$exe = pg_query($sigpa, $sql);
-			$carrera = pg_fetch_object($exe);
-
-			if(! $carrera->n) {
-				echo "Por aquí <strong>NO</strong> pasan inyecciones! :B";
-				exit;
+				if(! $carrera->n) {
+					echo "Por aquí <strong>NO</strong> pasan inyecciones! :B";
+					exit;
+				}
 			}
-		}
 
-		$carreras = $_POST["carrera"];
+			$carreras = $_POST["carrera"];
+		}
 	}
 
 // --------------------
@@ -216,24 +213,26 @@
 	// Si el proceso lo hace un usuario con privilegios administrativos
 
 		if(! isset($_SESSION["carrera"])) {
-			$wherePer = "";
+			if($_POST["carrera"]) {
+				$wherePer = "";
 
-			foreach($carreras as $carrera) {
-				$wherePer .= " and \"idCS\"!='$carrera'";
+				foreach($carreras as $carrera) {
+					$wherePer .= " and \"idCS\"!='$carrera'";
 
-				$sql = "select count(*) as n from pertenece where \"idProfesor\"='$cedula' and \"idCS\"='$carrera'";
-				$exe = pg_query($sigpa, $sql);
-				$cs = pg_fetch_object($exe);
+					$sql = "select count(*) as n from pertenece where \"idProfesor\"='$cedula' and \"idCS\"='$carrera'";
+					$exe = pg_query($sigpa, $sql);
+					$cs = pg_fetch_object($exe);
 
-				if($cs->n)
-					continue;
+					if($cs->n)
+						continue;
 
-				$sql = "insert into pertenece values('$carrera', '$cedula')";
-				$exe = pg_query($sigpa, $sql);
+					$sql = "insert into pertenece values('$carrera', '$cedula')";
+					$exe = pg_query($sigpa, $sql);
 
-				if(! $exe) {
-					echo "Ocurrió un error mientras se asignaba la carrera al profesor, por favor vuelva a intentarlo y si el error persiste comuníquelo al administrador del sistema&&error";
-					pg_query($sigpa, "rollback");
+					if(! $exe) {
+						echo "Ocurrió un error mientras se asignaba la carrera al profesor, por favor vuelva a intentarlo y si el error persiste comuníquelo al administrador del sistema&&error";
+						pg_query($sigpa, "rollback");
+					}
 				}
 			}
 

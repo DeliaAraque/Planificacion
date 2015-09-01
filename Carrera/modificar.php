@@ -97,6 +97,19 @@
 
 			$estructuras["estructura$sede"][] = $estructura;
 		}
+
+		$coordinador = htmlspecialchars($_POST["coordinador$sede"], ENT_QUOTES);
+
+		$sql = "select cedula from profesor where cedula='$coordinador'";
+		$exe = pg_query($sigpa, $sql);
+		$coordinador = pg_fetch_object($exe);
+
+		if(!$coordinador->cedula) {
+			echo "Por aquí <strong>NO</strong> pasan inyecciones! :B";
+			exit;
+		}
+
+		$coordinadores[] = htmlspecialchars($_POST["coordinador$sede"], ENT_QUOTES);
 	}
 
 	$sede = $_POST["sede"];
@@ -120,6 +133,7 @@
 	// --------------------
 
 		$whereCS = "where \"idCarrera\"='$id'";  // where para eliminar las sedes no seleccionadas de la carrera
+		$n = 0;
 
 		foreach($sede as $idSede) {
 			$whereCS .= " and \"idSede\"!='$idSede'";
@@ -134,7 +148,7 @@
 		// Asignar la sede a la carrera si no lo está
 
 			if(! $idCS->id) {
-				$sql = "insert into \"carreraSede\" values(default, '$id', '$idSede') returning id";
+				$sql = "insert into \"carreraSede\" values(default, '$id', '$coordinadores[$n]', '$idSede') returning id";
 				$exe = pg_query($sigpa, $sql);
 
 			// Si ocurrió un error asignando la sede
@@ -155,6 +169,34 @@
 			}
 
 		// --------------------
+
+		// Modificar los datos si existen
+
+			else {
+				$sql = "update \"carreraSede\" set \"idCoordinador\"='$coordinadores[$n]' where id='$idCS->id'";
+				$exe = pg_query($sigpa, $sql);
+
+				if(!$exe) {
+					$sql = "select nombre from sede where id='$idSede'";
+					$exe = pg_query($sigpa, $sql);
+					$sede = pg_fetch_object($exe);
+
+					echo "Ocurrió un error modificando los datos en la sede $sede->nombre&&error";
+					pg_query($sigpa, "rollback");
+					exit;
+				}
+			}
+
+		// --------------------
+
+			$sql = "select count(\"idCS\") as n from pertenece where \"idCS\"='$idCS->id' and \"idProfesor\"='$coordinadores[$n]'";
+			$exe = pg_query($sigpa, $sql);
+			$nPer = pg_fetch_object($exe);
+
+			if(! $nPer->n) {
+				$sql = "insert into pertenece values('$idCS->id', '$coordinadores[$n]')";
+				$exe = pg_query($sigpa, $sql);
+			}
 
 	// --------------------
 
@@ -203,6 +245,8 @@
 
 			$sql = "delete from \"estructuraCS\" $whereECS";
 			$exe = pg_query($sigpa, $sql);
+
+			++$n;
 		}
 
 		$sql = "delete from \"carreraSede\" $whereCS";

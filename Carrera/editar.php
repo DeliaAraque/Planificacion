@@ -62,10 +62,11 @@
 	while($sede = pg_fetch_object($exe))
 		$sedes[] = $sede->idSede;
 
-	$n = 0;
-
 	$sql = "select id, nombre from sede order by nombre";
 	$exe = pg_query($sigpa, $sql);
+
+	$n = 0;
+	$optionsBan = "null";
 
 	while($sede=pg_fetch_object($exe)) {
 ?>
@@ -73,11 +74,9 @@
 				<?php if($n) echo "<div class=\"form-group col-xs-12\"><hr/></div>" ?>
 
 				<div class="row">
-					<div class="col-xs-4 col-xs-offset-2"><div class="form-group">
-						<label class="checkbox"><input type="checkbox" name="sede[]" value="<?= $sede->id; ?>" <?php if(in_array($sede->id, $sedes)) echo "checked=\"checked\""; ?>><strong><?= $sede->nombre; ?></strong></label>
-					</div></div>
+					<div class="col-xs-4"><div class="form-group"><label class="checkbox-inline"><input type="checkbox" name="sede[]" value="<?= $sede->id; ?>" onClick="enableProf(this)" <?php if(in_array($sede->id, $sedes)) echo "checked=\"checked\""; ?>><strong><?= $sede->nombre; ?></strong></label></div></div>
 
-					<div class="col-xs-6"><div class="form-group">
+					<div class="col-xs-8"><div class="form-group">
 
 <?php
 		$sql = "select \"idEstructura\" from \"estructuraCS\" where \"idCS\"=(select id from \"carreraSede\" where \"idCarrera\"='$carrera->id' and \"idSede\"='$sede->id') order by \"idEstructura\"";
@@ -102,9 +101,66 @@
 
 					</div></div>
 
+					<div class="col-xs-12"><div class="form-group">
+						<select name="coordinador<?= $sede->id; ?>" id="coordinador<?= $sede->id; ?>" class="form-control" onChange="noRepetido(this.value)" required="required" <?php if(! in_array($sede->id, $sedes)) echo "disabled=\"disabled\""; ?>>
+							<option value="">Coordinador</option>
+
+<?php
+		if(in_array($sede->id, $sedes)) {
+			$sql="
+				select p.cedula as cedula, p.apellido as apellido, p.nombre as nombre 
+				from pertenece as per
+					join profesor as prof on prof.cedula=per.\"idProfesor\" 
+					join persona as p on p.cedula=prof.cedula 
+				where per.\"idCS\"=(select id from \"carreraSede\" where \"idCarrera\"='$carrera->id' and \"idSede\"='$sede->id') 
+				order by p.apellido, p.nombre, p.cedula
+			";
+		}
+
+		else {
+			$sql="
+				select p.cedula as cedula, p.apellido as apellido, p.nombre as nombre 
+				from persona as p 
+					join profesor as prof on prof.cedula=p.cedula 
+				order by p.apellido, p.nombre, p.cedula
+			";
+		}
+
+		$exe2=pg_query($sigpa, $sql);
+
+		while($profesor = pg_fetch_object($exe2)) {
+			$sql="select count(\"idCoordinador\") as n from \"carreraSede\" where \"idCarrera\"!='$carrera->id' and \"idCoordinador\"='$profesor->cedula'";
+			$exe3=pg_query($sigpa, $sql);
+			$n = pg_fetch_object($exe3);
+
+			if($n->n)
+				continue;
+
+			if(in_array($sede->id, $sedes)) {
+				$sql="select count(\"idCoordinador\") as n from \"carreraSede\" where \"idCarrera\"='$carrera->id' and \"idCoordinador\"='$profesor->cedula'";
+				$exe3=pg_query($sigpa, $sql);
+				$n = pg_fetch_object($exe3);
+
+				if($n->n) {
+					$selected = "selected=\"selected\"";
+					$optionsBan .= ",\"$profesor->cedula\"";
+					$valueInput = $profesor->cedula;
+				}
+			}
+
+			echo "<option value='$profesor->cedula' $selected $disabled>$profesor->apellido $profesor->nombre ($profesor->cedula)</option>";
+			unset($selected);
+			unset($disabled);
+		}
+?>
+
+						</select>
+						<input type="hidden" value="<?= $valueInput; ?>" />
+					</div></div>
 				</div>
 
 <?php
+		unset($valueInput);
 		++$n;
 	}
 ?>
@@ -120,3 +176,40 @@
 		</form>
 	</div>
 </div>
+
+<script>
+	var optionsBan = new Array(<?= $optionsBan; ?>);
+
+	for(var i = 0; i < optionsBan.length; ++i)
+		$("select[name^='coordinador'] option[value='" + optionsBan[i] + "']").attr("disabled", "disabled");
+
+	$("option[selected='selected']").removeAttr("disabled");
+
+	function enableProf(sede) {
+		var coordinadorSelect = $("#coordinador" + sede.value);
+
+		if(sede.checked)
+			coordinadorSelect.removeAttr("disabled");
+
+		else {
+			coordinadorSelect.attr("disabled", "disabled");
+
+			$("#coordinador" + sede.value +" option:first-child").attr("selected", "selected");
+
+			var input = sede.parentNode.parentNode.parentNode.parentNode.querySelector("input[type='hidden']");
+
+			$("select[name^='coordinador'] option[value='" + input.value + "']").removeAttr("disabled");
+			input.value = "";
+		}
+	}
+
+	function noRepetido(cedula) {
+		$("select[name^='coordinador'] option[value='" + $("select:focus + input").attr("value") + "']").removeAttr("disabled");
+
+		if(cedula)
+			$("select[name^='coordinador'] option[value='" + cedula + "']").attr("disabled", "disabled");
+
+		$("select:focus option[value='" + cedula + "']").removeAttr("disabled");
+		$("select:focus + input").attr("value", cedula);
+	}
+</script>
