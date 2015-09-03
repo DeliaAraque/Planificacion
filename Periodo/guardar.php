@@ -16,7 +16,7 @@
 	$re = "^((0?[1-9]|[12][0-9])/0?2|((0?[1-9]|[12][0-9])|30)/(0?4|0?6|0?9|11)|((0?[1-9]|[12][0-9])|3[01])/(0?1|0?3|0?5|0?7|0?8|10|12))/[0-9]+$";
 
 	if(! ereg("$re", $_POST["fechaInicioP"])) {
-		echo "La fecha de inicio del período de planificación no cumple con el patrón necesario";
+		echo "La fecha de inicio del periodo de planificación no cumple con el patrón necesario";
 		exit;
 	}
 
@@ -26,7 +26,7 @@
 	$re = "^((0?[1-9]|[12][0-9])/0?2|((0?[1-9]|[12][0-9])|30)/(0?4|0?6|0?9|11)|((0?[1-9]|[12][0-9])|3[01])/(0?1|0?3|0?5|0?7|0?8|10|12))/[0-9]+$";
 
 	if(! ereg("$re", $_POST["fechaFinP"])) {
-		echo "La fecha de fin del período de planificación no cumple con el patrón necesario";
+		echo "La fecha de fin del periodo de planificación no cumple con el patrón necesario";
 		exit;
 	}
 
@@ -34,14 +34,14 @@
 	$fechaFinP = "$fecha[2]-$fecha[1]-$fecha[0]";
 
 	if($fechaInicioP > $fechaFinP) {
-		echo "La fecha de inicio del período de planificación no puede ser mayor a su fecha de fin";
+		echo "La fecha de inicio del periodo de planificación no puede ser mayor a su fecha de fin";
 		exit;
 	}
 
 	$re = "^((0?[1-9]|[12][0-9])/0?2|((0?[1-9]|[12][0-9])|30)/(0?4|0?6|0?9|11)|((0?[1-9]|[12][0-9])|3[01])/(0?1|0?3|0?5|0?7|0?8|10|12))/[0-9]+$";
 
 	if(! ereg("$re", $_POST["fechaInicioA"])) {
-		echo "La fecha de inicio del período académico no cumple con el patrón necesario";
+		echo "La fecha de inicio del periodo académico no cumple con el patrón necesario";
 		exit;
 	}
 
@@ -51,7 +51,7 @@
 	$re = "^((0?[1-9]|[12][0-9])/0?2|((0?[1-9]|[12][0-9])|30)/(0?4|0?6|0?9|11)|((0?[1-9]|[12][0-9])|3[01])/(0?1|0?3|0?5|0?7|0?8|10|12))/[0-9]+$";
 
 	if(! ereg("$re", $_POST["fechaFinA"])) {
-		echo "La fecha de fin del período académico no cumple con el patrón necesario";
+		echo "La fecha de fin del periodo académico no cumple con el patrón necesario";
 		exit;
 	}
 
@@ -59,7 +59,7 @@
 	$fechaFinA = "$fecha[2]-$fecha[1]-$fecha[0]";
 
 	if($fechaInicioA > $fechaFinA) {
-		echo "La fecha de inicio del período académico no puede ser mayor a su fecha de fin";
+		echo "La fecha de inicio del periodo académico no puede ser mayor a su fecha de fin";
 		exit;
 	}
 
@@ -99,7 +99,7 @@
 				$exe = pg_query($sigpa, $sql);
 				$ecs = pg_fetch_object($exe);
 
-				echo "Ya existe un período de planificación activo para $ecs->carrera - $ecs->sede ($ecs->estructura)";
+				echo "Ya existe un periodo activo para $ecs->carrera - $ecs->sede ($ecs->estructura)";
 				exit;
 			}
 
@@ -123,7 +123,7 @@
 			$exe = pg_query($sigpa, $sql);
 			$ecs = pg_fetch_object($exe);
 
-			echo "Existe un período antiguo de $ecs->carrera - $ecs->sede ($ecs->estructura) con ese código";
+			echo "Existe un periodo antiguo de $ecs->carrera - $ecs->sede ($ecs->estructura) con ese código";
 			exit;
 		}
 	}
@@ -135,10 +135,10 @@
 	pg_query($sigpa, "begin");
 
 	foreach($carreras as $carrera) {
-		$sql = "insert into periodo values('$id', '$fechaInicioP', '$fechaFinP', 'p', '$carrera')";
+		$sql = "insert into periodo values(default, '$id', '$fechaInicioP', '$fechaFinP', 'p', '$carrera')";
 		$exe = pg_query($sigpa, $sql);
 
-		$sql2 = "insert into periodo values('$id', '$fechaInicioA', '$fechaFinA', 'a', '$carrera')";
+		$sql2 = "insert into periodo values(default, '$id', '$fechaInicioA', '$fechaFinA', 'a', '$carrera')";
 		$exe = pg_query($sigpa, $sql2);
 
 // Si se guardo el príodo correctamente
@@ -147,7 +147,7 @@
 
 	// Agregar elemento al registro de acciones realizadas
 
-			$sql = "insert into historial values('" . time() . "', '$_SESSION[nombre] $_SESSION[apellido] ($_SESSION[cedula])', 'Se activó el nuevo período <strong>$id</strong>', '" . htmlspecialchars($sql, ENT_QUOTES) . "\n\n" . htmlspecialchars($sql2, ENT_QUOTES) . "')";
+			$sql = "insert into historial values('" . time() . "', '$_SESSION[nombre] $_SESSION[apellido] ($_SESSION[cedula])', 'Se activó el nuevo periodo <strong>$id</strong>', '" . htmlspecialchars($sql, ENT_QUOTES) . "\n\n" . htmlspecialchars($sql2, ENT_QUOTES) . "')";
 			$exe = pg_query($sigpa, $sql);
 
 	// --------------------
@@ -159,7 +159,7 @@
 
 // --------------------
 
-// Si ocurrio un error guardando el período
+// Si ocurrio un error guardando el periodo
 
 		else {
 			echo "Ocurrió un error mientras el servidor intentaba guardar la información, por favor vuelva a intentarlo y si el error persiste comuníquelo al administrador del sistema&&error";

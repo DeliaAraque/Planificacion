@@ -17,7 +17,7 @@
 	$re = "^((0?[1-9]|[12][0-9])/0?2|((0?[1-9]|[12][0-9])|30)/(0?4|0?6|0?9|11)|((0?[1-9]|[12][0-9])|3[01])/(0?1|0?3|0?5|0?7|0?8|10|12))/[0-9]+$";
 
 	if(! ereg("$re", $_POST["fechaInicioP"])) {
-		echo "La fecha de inicio del período de planificación no cumple con el patrón necesario";
+		echo "La fecha de inicio del periodo de planificación no cumple con el patrón necesario";
 		exit;
 	}
 
@@ -27,7 +27,7 @@
 	$re = "^((0?[1-9]|[12][0-9])/0?2|((0?[1-9]|[12][0-9])|30)/(0?4|0?6|0?9|11)|((0?[1-9]|[12][0-9])|3[01])/(0?1|0?3|0?5|0?7|0?8|10|12))/[0-9]+$";
 
 	if(! ereg("$re", $_POST["fechaFinP"])) {
-		echo "La fecha de fin del período de planificación no cumple con el patrón necesario";
+		echo "La fecha de fin del periodo de planificación no cumple con el patrón necesario";
 		exit;
 	}
 
@@ -35,14 +35,14 @@
 	$fechaFinP = "$fecha[2]-$fecha[1]-$fecha[0]";
 
 	if($fechaInicioP > $fechaFinP) {
-		echo "La fecha de inicio del período de planificación no puede ser mayor a su fecha de fin";
+		echo "La fecha de inicio del periodo de planificación no puede ser mayor a su fecha de fin";
 		exit;
 	}
 
 	$re = "^((0?[1-9]|[12][0-9])/0?2|((0?[1-9]|[12][0-9])|30)/(0?4|0?6|0?9|11)|((0?[1-9]|[12][0-9])|3[01])/(0?1|0?3|0?5|0?7|0?8|10|12))/[0-9]+$";
 
 	if(! ereg("$re", $_POST["fechaInicioA"])) {
-		echo "La fecha de inicio del período académico no cumple con el patrón necesario";
+		echo "La fecha de inicio del periodo académico no cumple con el patrón necesario";
 		exit;
 	}
 
@@ -52,7 +52,7 @@
 	$re = "^((0?[1-9]|[12][0-9])/0?2|((0?[1-9]|[12][0-9])|30)/(0?4|0?6|0?9|11)|((0?[1-9]|[12][0-9])|3[01])/(0?1|0?3|0?5|0?7|0?8|10|12))/[0-9]+$";
 
 	if(! ereg("$re", $_POST["fechaFinA"])) {
-		echo "La fecha de fin del período académico no cumple con el patrón necesario";
+		echo "La fecha de fin del periodo académico no cumple con el patrón necesario";
 		exit;
 	}
 
@@ -60,7 +60,7 @@
 	$fechaFinA = "$fecha[2]-$fecha[1]-$fecha[0]";
 
 	if($fechaInicioA > $fechaFinA) {
-		echo "La fecha de inicio del período académico no puede ser mayor a su fecha de fin";
+		echo "La fecha de inicio del periodo académico no puede ser mayor a su fecha de fin";
 		exit;
 	}
 
@@ -106,7 +106,7 @@
 		$n = $n->n;
 
 		if($n) {
-			echo "Existe un período antiguo de con ese código para esta carrera";
+			echo "Existe un periodo antiguo de con ese código para esta carrera";
 			exit;
 		}
 	}
@@ -140,7 +140,7 @@
 		$exe = pg_query($sigpa, $sql3);
 		$ecs = pg_fetch_object($exe);
 
-		$sql = "insert into historial values('" . time() . "', '$_SESSION[nombre] $_SESSION[apellido] ($_SESSION[cedula])', 'Se modificó el período <strong>$id</strong> de <strong>$ecs->carrera - $ecs->sede ($ecs->estructura)</strong>', '" . htmlspecialchars($sql, ENT_QUOTES) . "\n\n" . htmlspecialchars($sql2, ENT_QUOTES) . "')";
+		$sql = "insert into historial values('" . time() . "', '$_SESSION[nombre] $_SESSION[apellido] ($_SESSION[cedula])', 'Se modificó el periodo <strong>$id</strong> de <strong>$ecs->carrera - $ecs->sede ($ecs->estructura)</strong>', '" . htmlspecialchars($sql, ENT_QUOTES) . "\n\n" . htmlspecialchars($sql2, ENT_QUOTES) . "')";
 		$exe = pg_query($sigpa, $sql);
 
 	// --------------------
@@ -152,7 +152,7 @@
 
 // --------------------
 
-// Si ocurrio un error modificando el período
+// Si ocurrio un error modificando el periodo
 
 	echo "Ocurrió un error mientras el servidor intentaba modificar la información, por favor vuelva a intentarlo y si el error persiste comuníquelo al administrador del sistema&&error";
 	pg_query($sigpa, "rollback");

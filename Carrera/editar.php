@@ -100,7 +100,9 @@
 ?>
 
 					</div></div>
-
+<?php
+	
+?>
 					<div class="col-xs-12"><div class="form-group">
 						<select name="coordinador<?= $sede->id; ?>" id="coordinador<?= $sede->id; ?>" class="form-control" onChange="noRepetido(this.value)" required="required" <?php if(! in_array($sede->id, $sedes)) echo "disabled=\"disabled\""; ?>>
 							<option value="">Coordinador</option>
@@ -129,19 +131,19 @@
 		$exe2=pg_query($sigpa, $sql);
 
 		while($profesor = pg_fetch_object($exe2)) {
-			$sql="select count(\"idCoordinador\") as n from \"carreraSede\" where \"idCarrera\"!='$carrera->id' and \"idCoordinador\"='$profesor->cedula'";
+			$sql="select count(\"idCoordinador\") as n from \"carreraSede\" where \"idCarrera\"!='$carrera->id' and \"idCoordinador\"='$cedula'";
 			$exe3=pg_query($sigpa, $sql);
-			$n = pg_fetch_object($exe3);
+			$nProf = pg_fetch_object($exe3);
 
-			if($n->n)
+			if($nProf->n)
 				continue;
 
 			if(in_array($sede->id, $sedes)) {
 				$sql="select count(\"idCoordinador\") as n from \"carreraSede\" where \"idCarrera\"='$carrera->id' and \"idCoordinador\"='$profesor->cedula'";
 				$exe3=pg_query($sigpa, $sql);
-				$n = pg_fetch_object($exe3);
+				$nProf = pg_fetch_object($exe3);
 
-				if($n->n) {
+				if($nProf->n) {
 					$selected = "selected=\"selected\"";
 					$optionsBan .= ",\"$profesor->cedula\"";
 					$valueInput = $profesor->cedula;

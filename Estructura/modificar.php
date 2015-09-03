@@ -14,6 +14,22 @@
 	$nombre = $_POST["nombre"];
 	$nombreAnt = $_POST["nombreAnt"];
 
+	$sql = "
+		select COUNT(p.id) as n 
+		from estructura as e
+			join \"estructuraCS\" as ecs on ecs.\"idEstructura\"=e.id 
+			join periodo as p on p.\"idECS\"=ecs.id 
+		where e.nombre='$nombreAnt'
+	";
+	$exe = pg_query($sigpa, $sql);
+	$n = pg_fetch_object($exe);
+	$n = $n->n;
+
+	if($n) {
+		echo "Esta estructura no puede ser modificada porque es/fue usada en algún período académico";
+		exit;
+	}
+
 	if($nombre != $nombreAnt) {
 		$sql = "select COUNT(id) as n from estructura where nombre='$nombre'";
 		$exe = pg_query($sigpa, $sql);

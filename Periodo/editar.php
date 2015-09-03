@@ -22,7 +22,7 @@
 
 <div class="row">
 	<div class="col-lg-12">
-		<h1 class="page-header">Editar período <small><?= "$periodo->carrera - $periodo->sede ($periodo->estructura)"; ?></small></h1>
+		<h1 class="page-header">Editar periodo <small><?= "$periodo->carrera - $periodo->sede ($periodo->estructura)"; ?></small></h1>
 	</div>
 </div>
 
@@ -32,7 +32,7 @@
 			<div class="form-group">
 				<input type="text" name="id" placeholder="Código" value="<?= $periodo->id ?>" class="form-control" pattern="^[A-ZÁÉÍÓÚÑ0-9\-]+$" required="required" />
 				<input type="hidden" name="idAnt" value="<?= $periodo->id ?>" />
-				<p class="help-block">Solo están permitidos caracteres alfanuméricos sin espacios y guiones. Ej: B-2015.</p>
+				<p class="help-block">Solo están permitidos caracteres alfanuméricos sin espacios y guiones. Ej: 2015-B.</p>
 			</div>
 
 			<h4>Planificación:</h4>

@@ -4,8 +4,8 @@
 
 <div class="row">
 	<div class="col-lg-12">
-		<h1 class="page-header">Períodos</h1>
-		<small class="help-block">Para ver períodos antiguos haga click <a href="javascript: embem('moduloPlanificacion/Periodo/antiguo.php', '#page-wrapper')">aquí</a>.</small>
+		<h1 class="page-header">Periodos</h1>
+		<small class="help-block">Para ver periodos antiguos haga click <a href="javascript: embem('moduloPlanificacion/Periodo/antiguo.php', '#page-wrapper')">aquí</a>.</small>
 	</div>
 </div>
 
@@ -37,7 +37,7 @@
 			join \"carreraSede\" as cs on cs.id=ecs.\"idCS\" 
 			join carrera as c on c.id=cs.\"idCarrera\" 
 			join sede as s on s.id=cs.\"idSede\" 
-		where p.tipo='p' and p.\"fechaFin\">current_date 
+		where p.tipo='p' and p.\"fechaFin\">=current_date 
 		order by p.\"fechaInicio\" desc, p.\"fechaFin\" desc, p.id, c.nombre, s.nombre, e.nombre
 	";
 	$exe = pg_query($sigpa, $sql);
@@ -69,7 +69,7 @@
 
 				<tfoot>
 					<tr>
-						<td class="text-center" title="Nueva sede" onClick="embem('moduloPlanificacion/Periodo/form.php', '#page-wrapper')" style="cursor: pointer" colspan="4"><i class="fa fa-plus fa-fw agregar"></i></td>
+						<td class="text-center" title="Nuevo periodo" onClick="embem('moduloPlanificacion/Periodo/form.php', '#page-wrapper')" style="cursor: pointer" colspan="4"><i class="fa fa-plus fa-fw agregar"></i></td>
 					</tr>
 				</tfoot>
 			</table>
