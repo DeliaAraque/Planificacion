@@ -54,13 +54,19 @@
 ?>
 
 	<tr id="<?= $periodo->id; ?>"><td>
-		<div class="form-group">
-			<select name="unidadCurricular<?= $n; ?>" class="form-control" onChange="noRepetida(this.value)" required="required">
-				<option value="">Unidad Curricular</option>
+		<div class="form-group row">
+			<div class="form-group col-xs-11">
+				<select name="unidadCurricular<?= $n; ?>" class="form-control" onChange="noRepetida(this.value)" required="required">
+					<option value="">Unidad Curricular</option>
 
-				<?= $ucOptions; ?>
-			</select>
-			<input type="hidden" name="valorAnt" />
+					<?= $ucOptions; ?>
+				</select>
+				<input type="hidden" name="valorAnt" />
+			</div>
+
+			<div class="form-group col-xs-1">
+				<i class="fa fa-trash-o fa-fw eliminar" title="Quitar unidad curricular" onClick="borrarUc(this)"></i>
+			</div>
 		</div>
 
 		<div class="form-group">
@@ -106,13 +112,19 @@
 	<tr><th class="text-center" style="color: #00005b;"><?= "$subperiodo->nombre ($subperiodo->id)"; ?></th></tr>
 
 	<tr id="<?= "$periodo->id-$subperiodo->id"; ?>"><td>
-		<div class="form-group">
-			<select name="unidadCurricular<?= $n; ?>" class="form-control" onChange="noRepetida(this.value)" required="required">
-				<option value="">Unidad Curricular</option>
+		<div class="form-group row">
+			<div class="form-group col-xs-11">
+				<select name="unidadCurricular<?= $n; ?>" class="form-control" onChange="noRepetida(this.value)" required="required">
+					<option value="">Unidad Curricular</option>
 
-				<?= $ucOptions; ?>
-			</select>
-			<input type="hidden" name="valorAnt" />
+					<?= $ucOptions; ?>
+				</select>
+				<input type="hidden" name="valorAnt" />
+			</div>
+
+			<div class="form-group col-xs-1">
+				<i class="fa fa-trash-o fa-fw eliminar" title="Quitar unidad curricular" onClick="borrarUc(this)"></i>
+			</div>
 		</div>
 
 		<div class="form-group">

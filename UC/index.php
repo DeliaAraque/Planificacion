@@ -27,7 +27,7 @@
 	require "../../lib/conexion.php";
 
 	$sql = "
-		select uc.id as id, uc.nombre as nombre, e.nombre as eje, c.nombre as carrera
+		select uc.id as id, uc.nombre as nombre, uc.renombrable as renombrable, e.nombre as eje, c.nombre as carrera
 		from \"unidadCurricular\" as uc 
 			join carrera as c on c.id=uc.\"idCarrera\" 
 			join eje as e on e.id=uc.\"idEje\" 
@@ -39,7 +39,7 @@
 ?>
 
 					<tr>
-						<td><?= $uc->nombre; ?></td>
+						<td><?php echo $uc->nombre; if($uc->renombrable == "t") echo " <i class=\"fa fa-pencil-square-o\" title=\"Renombrable\"></i>"; ?></td>
 						<td><?= $uc->id; ?></td>
 						<td><?= $uc->carrera; ?></td>
 						<td><div class="row">

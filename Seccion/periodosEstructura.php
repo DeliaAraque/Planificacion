@@ -4,12 +4,12 @@
 
 	$re = "^[0-9]+$";
 
-	if(! ereg("$re", $_POST["estructura"]))
+	if(! ereg("$re", $_POST["mecs"]))
 		exit;
 
-	$estructura = $_POST["estructura"];
+	$mecs = $_POST["mecs"];
 
-	$sql = "select estructura from estructura where id='$estructura'";
+	$sql = "select estructura from estructura where id=(select \"idEstructura\" from \"estructuraCS\" where id=(select \"idECS\" from \"mallaECS\" where id='$mecs'))";
 	$exe = pg_query($sigpa, $sql);
 	$estructura = pg_fetch_object($exe);
 	$estructura = json_decode($estructura->estructura);

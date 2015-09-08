@@ -90,25 +90,27 @@
 		exit;
 	}
 
-	$estructura = htmlspecialchars($_POST["estructura"], ENT_QUOTES);
+	$malla = htmlspecialchars($_POST["malla"], ENT_QUOTES);
 
 	$sql = "
-		select count(e.id) as n
+		select ecs.id as id 
 		from periodo as p 
 			join \"estructuraCS\" as ecs on ecs.id=p.\"idECS\" 
-			join estructura as e on e.id=ecs.\"idEstructura\" 
 			join \"carreraSede\" as cs on cs.id=ecs.\"idCS\" 
-		where p.id='$periodo' and p.tipo='a' and cs.\"idCarrera\"='$carrera' and cs.\"idSede\"='$sede' and e.id='$estructura'
-		group by e.id
+			join \"mallaECS\" as mecs on mecs.\"idECS\"=ecs.id and mecs.estado is true 
+			join malla as m on m.id=mecs.\"idMalla\" 
+		where p.id='$periodo' and p.tipo='a' and cs.\"idCarrera\"='$carrera' and cs.\"idSede\"='$sede' and mecs.id='$malla'
+		group by ecs.id
 	";
 	$exe = pg_query($sigpa, $sql);
 	$n = pg_fetch_object($exe);
-	$n = $n->n;
 
-	if($n < 1) {
+	if($n->id < 1) {
 		echo "Por aquí <strong>NO</strong> pasan inyecciones! :B";
 		exit;
 	}
+
+	$estructura = $n->id;
 
 	$periodoEstructura = htmlspecialchars($_POST["periodoEstructura"], ENT_QUOTES);
 
@@ -126,7 +128,7 @@
 
 	pg_query($sigpa, "begin");
 
-	$sql = "insert into seccion values(default, '$id', '$turno', '$multiplicador', $grupos, (select \"ID\" from periodo where id='$periodo' and tipo='a' and \"idECS\"=(select id from \"estructuraCS\" where \"idEstructura\"='$estructura' and \"idCS\"=(select id from \"carreraSede\" where \"idCarrera\"='$carrera' and \"idSede\"='$sede'))), '$periodoEstructura')";
+	$sql = "insert into seccion values(default, '$id', '$turno', '$multiplicador', $grupos, '$malla', (select \"ID\" from periodo where id='$periodo' and tipo='a' and \"idECS\"=(select id from \"estructuraCS\" where \"idEstructura\"='$estructura' and \"idCS\"=(select id from \"carreraSede\" where \"idCarrera\"='$carrera' and \"idSede\"='$sede'))), '$periodoEstructura')";
 	$exe = pg_query($sigpa, $sql);
 
 // Si se guardó la sección correctamente

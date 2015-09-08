@@ -67,7 +67,7 @@
 			</div>
 
 			<div class="form-group">
-				<select name="periodo" class="form-control" onChange="selectEstructuras()" required="required">
+				<select name="periodo" class="form-control" onChange="selectMallas()" required="required">
 					<option value="">Periodo académico</option>
 				</select>
 				<p class="help-block">Antes de poder seleccionar algún periodo, debe elegir una sede.</p>
@@ -75,17 +75,17 @@
 
 
 			<div class="form-group">
-				<select name="estructura" class="form-control" onChange="selectPeriodosE()" required="required">
-					<option value="">Estructura</option>
+				<select name="malla" class="form-control" onChange="selectPeriodosE()" required="required">
+					<option value="">Malla</option>
 				</select>
-				<p class="help-block">Antes de poder seleccionar alguna estructura, debe elegir alguna carrera.</p>
+				<p class="help-block">Antes de poder seleccionar alguna malla, debe elegir alguna carrera.</p>
 			</div>
 
 			<div class="form-group" id="periodoEstructura">
 				<select name="periodoEstructura" class="form-control" required="required">
 					<option value="">Periodo</option>
 				</select>
-				<p class="help-block">Antes de poder seleccionar algún periodo, debe elegir alguna estructura.</p>
+				<p class="help-block">Antes de poder seleccionar algún periodo, debe elegir alguna malla.</p>
 			</div>
 
 			<div class="form-group text-center">
@@ -104,7 +104,7 @@
 		if(! carrera.value) {
 			sede.innerHTML = "<option value=\"\">Sede</option>";
 			document.seccion.periodo.innerHTML = "<option value=\"\">Periodo académico</option>";
-			document.seccion.estructura.innerHTML = "<option value=\"\">Estructura</option>";
+			document.seccion.malla.innerHTML = "<option value=\"\">Malla</option>";
 			document.seccion.periodoEstructura.innerHTML = "<option value=\"\">Periodo</option>";
 			return false;
 		}
@@ -125,29 +125,29 @@
 		embem('moduloPlanificacion/Seccion/periodos.php', periodo, "carrera=" + carrera.value + "&sede=" + sede.value);
 	}
 
-	function selectEstructuras() {
+	function selectMallas() {
 		var carrera = document.seccion.carrera;
 		var sede = document.seccion.sede;
 		var periodo = document.seccion.periodo;
-		var estructura = document.seccion.estructura;
+		var malla = document.seccion.malla;
 
 		if(! periodo.value) {
-			estructura.innerHTML = "<option value=\"\">Estructura</option>";
+			malla.innerHTML = "<option value=\"\">Malla</option>";
 			return false;
 		}
 
-		embem('moduloPlanificacion/Seccion/estructuras.php', estructura, "carrera=" + carrera.value + "&sede=" + sede.value + "&periodo=" + periodo.value);
+		embem('moduloPlanificacion/Seccion/mallas.php', malla, "carrera=" + carrera.value + "&sede=" + sede.value + "&periodo=" + periodo.value);
 	}
 
 	function selectPeriodosE() {
-		var estructura = document.seccion.estructura;
+		var malla = document.seccion.malla;
 		var periodoEstructura = document.seccion.periodoEstructura;
 
-		if(! estructura.value) {
+		if(! malla.value) {
 			periodoEstructura.innerHTML = "<option value=\"\">Periodo</option>";
 			return false;
 		}
 
-		embem('moduloPlanificacion/Seccion/periodosEstructura.php', periodoEstructura, "estructura=" + estructura.value);
+		embem('moduloPlanificacion/Seccion/periodosEstructura.php', periodoEstructura, "mecs=" + malla.value);
 	}
 </script>

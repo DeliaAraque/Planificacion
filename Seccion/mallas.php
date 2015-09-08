@@ -23,23 +23,24 @@
 	$periodo = $_POST["periodo"];
 ?>
 
-<option value="">Estructura</option>
+<option value="">Malla</option>
 
 <?php
 	require "../../lib/conexion.php";
 
 	$sql="
-		select e.id as id, e.nombre as nombre
+		select mecs.id as id, m.id as nombre 
 		from periodo as p 
 			join \"estructuraCS\" as ecs on ecs.id=p.\"idECS\" 
-			join estructura as e on e.id=ecs.\"idEstructura\" 
 			join \"carreraSede\" as cs on cs.id=ecs.\"idCS\" 
+			join \"mallaECS\" as mecs on mecs.\"idECS\"=ecs.id and mecs.estado is true 
+			join malla as m on m.id=mecs.\"idMalla\" 
 		where p.id='$periodo' and p.tipo='a' and cs.\"idCarrera\"='$carrera' and cs.\"idSede\"='$sede' 
-		group by e.id, e.nombre
+		group by mecs.id, m.id
+		order by m.id desc
 	";
 	$exe=pg_query($sigpa, $sql);
 
-	while($estructura=pg_fetch_object($exe))
-		echo "<option value=\"$estructura->id\">$estructura->nombre</option>";
-
+	while($malla=pg_fetch_object($exe))
+		echo "<option value=\"$malla->id\">$malla->nombre</option>";
 ?>
