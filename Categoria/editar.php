@@ -20,9 +20,9 @@
 		<form name="categoria" method="POST" action="moduloPlanificacion/Categoria/modificar.php" data-exe="embem('moduloPlanificacion/Categoria/index.php', '#page-wrapper')" role="form">
 			<div class="form-group">
 				Abreviatura:
-				<input type="text" name="id" placeholder="Abreviatura" value="<?= $id; ?>" class="form-control" pattern="^[a-záéíóúñA-ZÁÉÍÓÚÑ0-9]+$" onKeyUp="if(this.value != document.categoria.idAnt.value) Verif(this)" required="required" />
+				<input type="text" name="id" placeholder="Abreviatura" value="<?= $id; ?>" class="form-control" pattern="^[a-záéíóúñA-ZÁÉÍÓÚÑ]+$" onKeyUp="if(this.value != document.categoria.idAnt.value) Verif(this)" required="required" />
 				<input type="hidden" name="idAnt" value="<?= $id; ?>" />
-				<p class="help-block">Solo están permitidos caracteres alfanuméricos sin espacios. Ej: Inst.</p>
+				<p class="help-block">Solo están permitidos caracteres alfabéticos sin espacios. Ej: Inst.</p>
 			</div>
 
 			<div class="form-group">
