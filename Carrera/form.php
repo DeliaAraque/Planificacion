@@ -37,6 +37,8 @@
 ?>
 
 				</select>
+
+				<p class="help-block">En caso de que no exista el area que desea seleccionar, deberá registrarla <a href="javascript: embem('moduloPlanificacion/Area/form.html', '#page-wrapper')">aquí</a>.</p>
 			</div>
 
 			<div class="form-group"> 

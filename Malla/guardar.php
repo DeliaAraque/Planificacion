@@ -117,7 +117,7 @@
 
 		$tipos[] = (! isset($_POST["tipo$i"])) ? "false" : "true";
 
-		$re = "^[0-9]+$";
+		$re = "^[1-9]$";
 
 		if(! ereg("$re", $_POST["ht$i"])) {
 			echo "Las horas teóricas de la unidad curricular <strong>" . $_POST["unidadCurricular$i"] . "</strong> no cumplen con el patrón necesario";
@@ -126,7 +126,7 @@
 
 		$horasTeoricas[] = $_POST["ht$i"];
 
-		$re = "^[0-9]+$";
+		$re = "^[0-9]$";
 
 		if(! ereg("$re", $_POST["hp$i"])) {
 			echo "Las horas prácticas de la unidad curricular <strong>" . $_POST["unidadCurricular$i"] . "</strong> no cumplen con el patrón necesario";

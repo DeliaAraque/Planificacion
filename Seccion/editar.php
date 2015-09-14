@@ -196,9 +196,9 @@
 
 		else {
 			foreach($periodo->subperiodos as $subperiodo) {
-				echo "<option value=\"$periodo->id/$subperiodo->id\"";
+				echo "<option value=\"$periodo->id-$subperiodo->id\"";
 
-				if($seccion->periodoEstructura == "$periodo->id/$subperiodo->id")
+				if($seccion->periodoEstructura == "$periodo->id-$subperiodo->id")
 					echo " selected=\"selected\"";
 
 				echo ">$periodo->nombre - $subperiodo->nombre</option>";

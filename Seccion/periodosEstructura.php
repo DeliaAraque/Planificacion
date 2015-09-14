@@ -24,7 +24,7 @@
 
 		else {
 			foreach($periodo->subperiodos as $subperiodo)
-				echo "<option value=\"$periodo->id/$subperiodo->id\">$periodo->nombre - $subperiodo->nombre</option>";
+				echo "<option value=\"$periodo->id-$subperiodo->id\">$periodo->nombre - $subperiodo->nombre</option>";
 		}
 	}
 ?>

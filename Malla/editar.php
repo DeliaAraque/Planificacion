@@ -199,12 +199,14 @@
 
 						<div class="row">
 							<div class="form-group col-xs-6">
-								<input type="text" name="ht<?= $n; ?>" placeholder="Horas teóricas" value="<?= $unidadCurricular->horasTeoricas; ?>" class="form-control" pattern="^[0-9]+$" required="required" />
+								Horas teóricas:
+								<input type="text" name="ht<?= $n; ?>" placeholder="Horas teóricas" value="<?= $unidadCurricular->horasTeoricas; ?>" class="form-control" pattern="^[1-9]$" maxlength="1" required="required" />
 								<p class="help-block">Solo están permitidos caracteres numéricos, la unidad de medida utilizada es <strong>Horas</strong>. Ej: 2.</p>
 							</div>
 
 							<div class="form-group col-xs-6">
-								<input type="text" name="hp<?= $n; ?>" placeholder="Horas prácticas" value="<?= $unidadCurricular->horasPracticas; ?>" class="form-control" pattern="^[0-9]+$" required="required" />
+								Horas prácticas:
+								<input type="text" name="hp<?= $n; ?>" placeholder="Horas prácticas" value="<?= $unidadCurricular->horasPracticas; ?>" class="form-control" pattern="^[0-9]$" maxlength="1" required="required" />
 								<p class="help-block">Solo están permitidos caracteres numéricos, la unidad de medida utilizada es <strong>Horas</strong>. Ej: 3.</p>
 							</div>
 						</div>
@@ -272,12 +274,14 @@
 
 						<div class="row">
 							<div class="form-group col-xs-6">
-								<input type="text" name="ht<?= $n; ?>" placeholder="Horas teóricas" value="<?= $unidadCurricular->horasTeoricas; ?>" class="form-control" pattern="^[0-9]+$" required="required" />
+								Horas teóricas:
+								<input type="text" name="ht<?= $n; ?>" placeholder="Horas teóricas" value="<?= $unidadCurricular->horasTeoricas; ?>" class="form-control" pattern="^[1-9]$" maxlength="1" required="required" />
 								<p class="help-block">Solo están permitidos caracteres numéricos, la unidad de medida utilizada es <strong>Horas</strong>. Ej: 2.</p>
 							</div>
 
 							<div class="form-group col-xs-6">
-								<input type="text" name="hp<?= $n; ?>" placeholder="Horas prácticas" value="<?= $unidadCurricular->horasPracticas; ?>" class="form-control" pattern="^[0-9]+$" required="required" />
+								Horas prácticas:
+								<input type="text" name="hp<?= $n; ?>" placeholder="Horas prácticas" value="<?= $unidadCurricular->horasPracticas; ?>" class="form-control" pattern="^[0-9]$" maxlength="1" required="required" />
 								<p class="help-block">Solo están permitidos caracteres numéricos, la unidad de medida utilizada es <strong>Horas</strong>. Ej: 3.</p>
 							</div>
 						</div>
@@ -397,7 +401,7 @@
 
 						nuc += "<td> <div class=\"form-group row\"> <div class=\"form-group col-xs-11\"> <select name=\"unidadCurricular" + cantidad.value + "\" class=\"form-control\" onChange=\"noRepetida(this.value)\" required=\"required\">";
 						nuc += $("select[name='unidadCurricularPlantilla']").html();
-						nuc += "</select> <input type=\"hidden\" name=\"valorAnt\" /> </div> <div class=\"form-group col-xs-1\"> <i class=\"fa fa-trash-o fa-fw eliminar\" title=\"Quitar unidad curricular\" style=\"padding-top: 0.3em;\" onClick=\"borrarUc(this)\"></i> </div> </div> <div class=\"form-group\"> <label class=\"checkbox-inline\"><input type=\"checkbox\" name=\"tipo" + cantidad.value + "\" value=\"1\"> Laboratorio </label> </div> <div class=\"row\"> <div class=\"form-group col-xs-6\"> <input type=\"text\" name=\"ht" + cantidad.value + "\" placeholder=\"Horas teóricas\" class=\"form-control\" pattern=\"^[0-9]+$\" required=\"required\" /> <p class=\"help-block\">Solo están permitidos caracteres numéricos, la unidad de medida utilizada es <strong>Horas</strong>. Ej: 2.</p> </div> <div class=\"form-group col-xs-6\"> <input type=\"text\" name=\"hp" + cantidad.value + "\" placeholder=\"Horas prácticas\" class=\"form-control\" pattern=\"^[0-9]+$\" required=\"required\" /> <p class=\"help-block\">Solo están permitidos caracteres numéricos, la unidad de medida utilizada es <strong>Horas</strong>. Ej: 3.</p> </div> </div>";
+						nuc += "</select> <input type=\"hidden\" name=\"valorAnt\" /> </div> <div class=\"form-group col-xs-1\"> <i class=\"fa fa-trash-o fa-fw eliminar\" title=\"Quitar unidad curricular\" style=\"padding-top: 0.3em;\" onClick=\"borrarUc(this)\"></i> </div> </div> <div class=\"form-group\"> <label class=\"checkbox-inline\"><input type=\"checkbox\" name=\"tipo" + cantidad.value + "\" value=\"1\"> Laboratorio </label> </div> <div class=\"row\"> <div class=\"form-group col-xs-6\"> <input type=\"text\" name=\"ht" + cantidad.value + "\" placeholder=\"Horas teóricas\" class=\"form-control\" pattern=\"^[1-9]$\" maxlength=\"1\" required=\"required\" /> <p class=\"help-block\">Solo están permitidos caracteres numéricos, la unidad de medida utilizada es <strong>Horas</strong>. Ej: 2.</p> </div> <div class=\"form-group col-xs-6\"> <input type=\"text\" name=\"hp" + cantidad.value + "\" placeholder=\"Horas prácticas\" class=\"form-control\" pattern=\"^[0-9]$\" maxlength=\"1\" required=\"required\" /> <p class=\"help-block\">Solo están permitidos caracteres numéricos, la unidad de medida utilizada es <strong>Horas</strong>. Ej: 3.</p> </div> </div>";
 
 						if(n > 1) {
 							nuc += "<div class=\"form-group\"> <input type=\"number\" name=\"duracion" + cantidad.value + "\" placeholder=\"Duración\" value=\"1\" class=\"form-control\" pattern=\"^[0-9]+$\" min=\"1\" max=\"";

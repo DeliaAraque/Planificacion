@@ -5,7 +5,7 @@
 	$cedula = $_POST["cedula"];
 
 	$sql = "
-		select p.cedula as cedula, p.nombre as nombre, p.\"segundoNombre\" as \"segundoNombre\", p.apellido as apellido, p.\"segundoNombre\" as \"segundoNombre\", p.sexo as sexo, p.correo as correo, p.direccion as direccion, p.telefono as telefono, p.\"telefonoFijo\" as \"telefonoFijo\", prof.profesion as profesion, prof.categoria as categoria, prof.dedicacion as dedicacion, prof.condicion as condicion 
+		select p.cedula as cedula, p.nombre as nombre, p.\"segundoNombre\" as \"segundoNombre\", p.apellido as apellido, p.\"segundoApellido\" as \"segundoApellido\", p.sexo as sexo, p.correo as correo, p.direccion as direccion, p.telefono as telefono, p.\"telefonoFijo\" as \"telefonoFijo\", prof.profesion as profesion, prof.categoria as categoria, prof.dedicacion as dedicacion, prof.condicion as condicion 
 		from persona as p 
 			join profesor as prof on prof.cedula=p.cedula 
 		where p.cedula='$cedula'

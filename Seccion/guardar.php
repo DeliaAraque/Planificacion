@@ -7,7 +7,7 @@
 	$re = "^[A-Z]$";
 
 	if(! ereg("$re", $_POST["id"])) {
-		echo "La sección indicado no cumple con el patrón necesario";
+		echo "La sección indicada no cumple con el patrón necesario";
 		exit;
 	}
 
@@ -93,24 +93,24 @@
 	$malla = htmlspecialchars($_POST["malla"], ENT_QUOTES);
 
 	$sql = "
-		select ecs.id as id 
+		select ecs.id as id, ecs.\"idEstructura\" as \"idEstructura\" 
 		from periodo as p 
 			join \"estructuraCS\" as ecs on ecs.id=p.\"idECS\" 
 			join \"carreraSede\" as cs on cs.id=ecs.\"idCS\" 
 			join \"mallaECS\" as mecs on mecs.\"idECS\"=ecs.id and mecs.estado is true 
 			join malla as m on m.id=mecs.\"idMalla\" 
 		where p.id='$periodo' and p.tipo='a' and cs.\"idCarrera\"='$carrera' and cs.\"idSede\"='$sede' and mecs.id='$malla'
-		group by ecs.id
+		group by ecs.id, ecs.\"idEstructura\"
 	";
 	$exe = pg_query($sigpa, $sql);
 	$n = pg_fetch_object($exe);
-
+ 
 	if($n->id < 1) {
 		echo "Por aquí <strong>NO</strong> pasan inyecciones! :B";
 		exit;
 	}
 
-	$estructura = $n->id;
+	$estructura = $n->idEstructura;
 
 	$periodoEstructura = htmlspecialchars($_POST["periodoEstructura"], ENT_QUOTES);
 

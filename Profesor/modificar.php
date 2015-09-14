@@ -43,7 +43,7 @@
 			exit;
 		}
 
-		$segundoNombre = "'" . $_POST["segundoNombre"] . "'";
+		$segundoNombre = "'$_POST[segundoNombre]'";
 	}
 
 	else
@@ -66,7 +66,7 @@
 			exit;
 		}
 
-		$segundoApellido = "'" . $_POST["segundoApellido"] . "'";
+		$segundoApellido = "'$_POST[segundoApellido]'";
 	}
 
 	else
@@ -107,7 +107,7 @@
 			exit;
 		}
 
-		$telefonoFijo = "'" . $_POST["telefonoFijo"] . "'";
+		$telefonoFijo = "'$_POST[telefonoFijo]'";
 	}
 
 	else
@@ -205,7 +205,7 @@
 
 	// Agregar elemento al registro de acciones realizadas
 
-		$sql = "insert into historial values('" . time() . "', '$_SESSION[nombre] $_SESSION[apellido] ($_SESSION[cedula])', 'Se modificí al profesor <strong>$nombre $apellido ($cedula)</strong>', '" . htmlspecialchars($sql, ENT_QUOTES) . "\n\n" . htmlspecialchars($sql2, ENT_QUOTES) . "')";
+		$sql = "insert into historial values('" . time() . "', '$_SESSION[nombre] $_SESSION[apellido] ($_SESSION[cedula])', 'Se modificó al profesor <strong>$nombre $apellido ($cedula)</strong>', '" . htmlspecialchars($sql, ENT_QUOTES) . "\n\n" . htmlspecialchars($sql2, ENT_QUOTES) . "')";
 		$exe = pg_query($sigpa, $sql);
 
 	// --------------------

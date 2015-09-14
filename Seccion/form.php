@@ -78,7 +78,7 @@
 				<select name="malla" class="form-control" onChange="selectPeriodosE()" required="required">
 					<option value="">Malla</option>
 				</select>
-				<p class="help-block">Antes de poder seleccionar alguna malla, debe elegir alguna carrera.</p>
+				<p class="help-block">Antes de poder seleccionar alguna malla, debe elegir algún periodo académico.</p>
 			</div>
 
 			<div class="form-group" id="periodoEstructura">
