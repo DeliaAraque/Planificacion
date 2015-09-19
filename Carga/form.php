@@ -10,9 +10,10 @@
 	$periodoEstructura = htmlspecialchars($_POST["periodoEstructura"], ENT_QUOTES);
 
 	$sql = "
-		select uc.id as id, uc.nombre as nombre, uc.renombrable as renombrable 
+		select uc.id as id, uc.nombre as nombre, uc.renombrable as renombrable, ucm.\"horasTeoricas\" as ht, ucm.\"horasPracticas\" as hp, ucm.tipo as tipo 
 		from \"unidadCurricular\" as uc 
-		where uc.id='$id'
+			join \"ucMalla\" as ucm on ucm.\"idUC\"=uc.id 
+		where uc.id='$id' and ucm.\"idMalla\"=(select \"idMalla\" from \"mallaECS\" where id='$mecs')
 	";
 	$exe = pg_query($sigpa, $sql);
 	$uc = pg_fetch_object($exe);
@@ -50,7 +51,7 @@
 			</div>
 
 			<div class="form-group">
-				<select name="profesor" class="form-control" required="required">
+				<select name="profesor" class="form-control" onChange="horasDisponibles(this.value)" required="required">
 					<option value="">Profesor</option>
 
 <?php
@@ -84,11 +85,52 @@
 	";
 	$exe = pg_query($sigpa, $sql);
 
-	while($profesor = pg_fetch_object($exe))
-		$options .= "<option value=\"$profesor->cedula\">$profesor->apellido $profesor->nombre ($profesor->cedula)</option>";
+	while($profesor = pg_fetch_object($exe)) {
+		$sql = "
+			select p.cedula as cedula, d.horas as dedicacion, p.condicion as condicion 
+			from profesor as p 
+				join dedicacion as d on d.id=p.dedicacion
+			where p.cedula='$profesor->cedula'
+		";
+		$exe2 = pg_query($sigpa, $sql);
+		$p = pg_fetch_object($exe2);
+
+		$sql = "
+			select ucm.\"horasTeoricas\" as ht, ucm.\"horasPracticas\" as hp, c.\"dividirHT\" as \"dividirHT\", s.multiplicador as multiplicador, s.grupos as grupos 
+			from carga as c 
+				join seccion as s on s.\"ID\"=c.\"idSeccion\" 
+				join \"mallaECS\" as mecs on mecs.id=s.\"idMECS\" 
+				join \"ucMalla\" as ucm on ucm.\"idMalla\"=mecs.\"idMalla\" and ucm.\"idUC\"=c.\"idUC\" 
+				join periodo as p on p.\"ID\"=s.\"idPeriodo\" and p.\"fechaFin\">current_date 
+			where c.\"idProfesor\"='$p->cedula'
+		";
+
+		if($p->condicion != 3)
+			$sql .= " or c.\"idSuplente\"='$p->cedula'";
+
+		$exe2 = pg_query($sigpa, $sql);
+
+		$total = 0;
+
+		while($horas = pg_fetch_object($exe2)) {
+			$ht = $horas->ht * $horas->multiplicador;
+			$hp = $horas->hp * $horas->multiplicador;
+
+			if($horas->grupos == "t") {
+				$hp *= 2;
+
+				if($horas->dividirHT == "t")
+					$ht *= 2;
+			}
+
+			$total += $ht + $hp;
+		}
+
+		$options .= "<option value=\"$profesor->cedula\">$profesor->apellido $profesor->nombre ($profesor->cedula) - Horas disponibles: " . ($p->dedicacion - $total) . "</option>";
+	}
 
 	$sql = "
-		select s.\"ID\" as \"ID\", s.id as id, s.grupos as grupos 
+		select s.\"ID\" as \"ID\", s.id as id, s.grupos as grupos, s.turno as turno, s.multiplicador as multiplicador 
 		from seccion as s 
 		where s.\"idPeriodo\"=(select \"ID\" from periodo where id='$periodo' and tipo='a' and \"idECS\"=(select \"idECS\" from \"mallaECS\" where id='$mecs')) and s.\"periodoEstructura\"='$periodoEstructura' 
 		order by s.id
@@ -99,25 +141,42 @@
 ?>
 
 			<div class="row">
-				<div class="col-xs-4">
+				<div class="col-xs-6">
 					<div class="form-group">
-						<label class="checkbox-inline"><input type="checkbox" name="seccion[]" value="<?= $seccion->id; ?>" onClick="enableSec(this); grupos('<?= $seccion->id; ?>')"> <?= $seccion->id; ?> </label>
+						<label class="checkbox-inline">
+							<input type="checkbox" name="seccion[]" value="<?= $seccion->id; ?>" onClick="enableSec(this); grupos(this)"> <?= $seccion->id; ?> 
+
+<?php
+		if($uc->tipo == "t") {
+			if($seccion->grupos == "t")
+				echo " <i class=\"fa fa-fw fa-users\" title=\"Se divide en grupos\"></i> <input type=\"hidden\" id=\"grupos$seccion->id\" value=\"1\" />";
+		}
+
+		if($seccion->turno == "n")
+			echo " <i class=\"fa fa-fw fa-moon-o\" title=\"Nocturna\"></i> <input type=\"hidden\" id=\"nocturna$seccion->id\" value=\"1\" />";
+?>
+
+						</label>
 						<input type="hidden" name="ID<?= $seccion->id; ?>" value="<?= $seccion->ID; ?>" />
+						<input type="hidden" id="multiplicador<?= $seccion->id; ?>" value="<?= $seccion->multiplicador; ?>" />
+						<input type="hidden" id="horas<?= $seccion->id; ?>" value="0" />
 					</div>
 				</div>
 
-				<div class="col-xs-8"><div class="form-group">
+				<div class="col-xs-6"><div class="form-group">
 					<div id="sec<?= $seccion->id; ?>"></div>
 
 <?php
-		if($seccion->grupos == "t") {
+		if($uc->tipo == "t") {
+			if($seccion->grupos == "t") {
 ?>
 
 					<div class="form-group">
-						<label class="checkbox-inline"><input type="checkbox" name="dividirHT<?= $seccion->id; ?>" id="dividirHT<?= $seccion->id; ?>" value="1" disabled="disabled"> Dividir horas teóricas en grupos </label>
+						<label class="checkbox-inline"><input type="checkbox" name="dividirHT<?= $seccion->id; ?>" id="dividirHT<?= $seccion->id; ?>" value="<?= $seccion->id; ?>" onClick="grupos(this)" disabled="disabled"> Dividir horas teóricas en grupos </label>
 					</div>
 
 <?php
+			}
 		}
 ?>
 
@@ -137,6 +196,10 @@
 	}
 ?>
 
+			<div class="form-group text-center"> 
+				Horas disponibles: <code style="font-size: 1.5em;" id="horasDisponibles">0</code>
+			</div>
+
 			<div class="form-group text-center">
 				<input type="submit" value="Guardar" class="btn btn-lg btn-primary" />
 				<input type="button" value="Cancelar" class="btn btn-lg" onClick="moreInfoClose()" />
@@ -150,10 +213,17 @@
 		var condicion = document.carga.condicion.value;
 		var profesor = document.carga.profesor;
 
+		$("#horasDisponibles").text(0);
 		embem('moduloPlanificacion/Carga/profesores.php', profesor, "carrera=<?= $carrera; ?>&sede=<?= $sede; ?>&condicion=" + condicion);
 	}
 
 	function enableSec(seccion) {
+		if(! document.carga.profesor.value) {
+			popUp("Debe seleccionar un profesor");
+			seccion.checked = false;
+			return false;
+		}
+
 		var suplenteSelect = $("#suplente" + seccion.value);
 		var dividirHT = $("#dividirHT" + seccion.value);
 
@@ -165,7 +235,70 @@
 		else {
 			suplenteSelect.attr("disabled", "disabled");
 			$("#suplente" + seccion.value +" option:first-child").attr("selected", "selected");
+			dividirHT.attr("checked", false);
 			dividirHT.attr("disabled", "disabled");
 		}
+	}
+
+	function grupos(seccion) {
+		if(! document.carga.profesor.value) {
+			return false;
+		}
+
+		var id = seccion.value;
+
+		var multiplicador = document.querySelector("#multiplicador" + seccion.value).value;
+		var ht = <?= $uc->ht; ?> * multiplicador;
+		var hp = <?= $uc->hp; ?> * multiplicador;
+
+		if($("#grupos" + seccion.value).attr("value") == 1) {
+			hp *= 2;
+
+			if(! document.querySelector("#dividirHT" + seccion.value).checked)
+				id = seccion.value + " (" + seccion.value + "1 - " + seccion.value + "2)";
+
+			else {
+				id = seccion.value + "1 - " + seccion.value + "2";
+				ht *= 2;
+			}
+		}
+
+		if($("#nocturna" + seccion.value).attr("value") == 1)
+			id = "* " + id;
+
+		if(seccion.value == id)
+			id = "";
+
+		else
+			id += " - ";
+
+		var horasAnt = $("#horas" + seccion.value).attr("value");
+
+		var horas = parseFloat(ht) + parseFloat(hp);
+		var horasDisponibles = $("#horasDisponibles").text();
+		$("#horasDisponibles").text(parseFloat(horasDisponibles) + parseFloat(horasAnt));
+
+		if((seccion.checked) || (seccion.name == "dividirHT" + seccion.value)) {
+			$("#horas" + seccion.value).attr("value", horas);
+			$("#horasDisponibles").text(parseFloat($("#horasDisponibles").text()) - parseFloat(horas));
+		}
+
+		else
+			$("#horas" + seccion.value).attr("value", 0);
+
+		horas += (horas == 1) ? " hora" : " horas";
+
+		$("#sec" + seccion.value).text(id + horas);
+	}
+
+	function horasDisponibles(profesor) {
+		var horas = $("#horasDisponibles");
+
+		if(! profesor) {
+			horas.text("0");
+			return false;
+		}
+
+		embem('moduloPlanificacion/Carga/horasDisponibles.php', horas, "profesor=" + profesor);
 	}
 </script>
