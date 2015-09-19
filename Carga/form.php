@@ -99,10 +99,10 @@
 			select ucm.\"horasTeoricas\" as ht, ucm.\"horasPracticas\" as hp, c.\"dividirHT\" as \"dividirHT\", s.multiplicador as multiplicador, s.grupos as grupos 
 			from carga as c 
 				join seccion as s on s.\"ID\"=c.\"idSeccion\" 
+				join periodo as p on p.\"ID\"=s.\"idPeriodo\" 
 				join \"mallaECS\" as mecs on mecs.id=s.\"idMECS\" 
-				join \"ucMalla\" as ucm on ucm.\"idMalla\"=mecs.\"idMalla\" and ucm.\"idUC\"=c.\"idUC\" 
-				join periodo as p on p.\"ID\"=s.\"idPeriodo\" and p.\"fechaFin\">current_date 
-			where c.\"idProfesor\"='$p->cedula'
+				join \"ucMalla\" as ucm on ucm.\"idMalla\"=mecs.\"idMalla\" and ucm.\"idUC\"=c.\"idUC\" and ucm.periodo=s.\"periodoEstructura\" 
+			where p.id='$periodo' and c.\"idProfesor\"='$p->cedula'
 		";
 
 		if($p->condicion != 3)
@@ -138,6 +138,12 @@
 	$exe = pg_query($sigpa, $sql);
 
 	while($seccion = pg_fetch_object($exe)) {
+		$sql = "select count(id) as n from carga where \"idSeccion\"='$seccion->ID' and \"idUC\"='$uc->id'";
+		$exe2 = pg_query($sigpa, $sql);
+		$n = pg_fetch_object($exe2);
+
+		if($n->n > 0)
+			continue;
 ?>
 
 			<div class="row">
@@ -201,6 +207,10 @@
 			</div>
 
 			<div class="form-group text-center">
+				<input type="hidden" name="carrera" value="<?= $carrera; ?>" />
+				<input type="hidden" name="sede" value="<?= $sede; ?>" />
+				<input type="hidden" name="unidadCurricular" value="<?= $uc->id; ?>" />
+
 				<input type="submit" value="Guardar" class="btn btn-lg btn-primary" />
 				<input type="button" value="Cancelar" class="btn btn-lg" onClick="moreInfoClose()" />
 			</div>
@@ -299,6 +309,6 @@
 			return false;
 		}
 
-		embem('moduloPlanificacion/Carga/horasDisponibles.php', horas, "profesor=" + profesor);
+		embem('moduloPlanificacion/Carga/horasDisponibles.php', horas, "profesor=" + profesor + "&periodo=<?= $periodo ?>");
 	}
 </script>

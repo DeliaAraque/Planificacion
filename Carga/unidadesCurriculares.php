@@ -38,6 +38,14 @@
 	$periodoEstructura = $_POST["periodoEstructura"];
 
 	$sql = "
+		select count(s.id) as n 
+		from seccion as s 
+			join periodo as p on p.\"ID\"=s.\"idPeriodo\"
+		where p.id='$periodo' and s.\"periodoEstructura\"='$periodoEstructura'";
+	$exe = pg_query($sigpa, $sql);
+	$n = pg_fetch_object($exe);
+
+	$sql = "
 		select uc.id as id, uc.nombre nombre 
 		from \"mallaECS\" as mecs 
 			join malla as m on m.id=mecs.\"idMalla\" 
@@ -53,21 +61,82 @@
 
 <?php
 	while($uc = pg_fetch_object($exe)) {
+		$nS = 0;
 ?>
 
 	<tr>
-		<th class="text-center" style="color: white; background-color: #00005b;">
+		<th class="text-center" style="color: white; background-color: #00005b;" colspan="2">
 			<?= "$uc->nombre ($uc->id)"; ?>
 		</th>
 	</tr>
 
+<?php
+		$sql = "
+			select per.apellido as \"apellidoProfesor\", per.nombre as \"nombreProfesor\", c.\"idProfesor\" as profesor, string_agg(concat_ws('&', s.id, c.\"idSuplente\"), '&&' order by s.id) as seccion 
+			from carga as c 
+				join persona as per on per.cedula=c.\"idProfesor\" 
+				join seccion as s on s.\"ID\"=c.\"idSeccion\" 
+				join periodo as p on p.\"ID\"=s.\"idPeriodo\" 
+			where c.\"idUC\"='$uc->id' and p.id='$periodo' 
+			group by per.apellido, per.nombre, c.\"idProfesor\" 
+			order by per.apellido, per.nombre, c.\"idProfesor\"
+		";
+		$exe2 = pg_query($sigpa, $sql);
+
+		while($carga = pg_fetch_object($exe2)) {
+?>
+
+	<tr>
+		<td><?= "$carga->apellidoProfesor $carga->nombreProfesor ($carga->profesor)"; ?></td>
+		<td><div class="row">
+			<div class="col-xs-9">
+
+<?php
+			$secciones = explode("&&", $carga->seccion);
+			$nS += count($secciones);
+
+			if(!$nS)
+				$nS = 0;
+
+			foreach($secciones as $seccion) {
+				list($seccion, $suplente) = explode("&", $seccion);
+
+				echo $seccion;
+				
+				if($suplente) {
+					$sql = "select apellido, nombre, cedula from persona where cedula='$suplente'";
+					$exe3 = pg_query($sigpa, $sql);
+					$suplente = pg_fetch_object($exe3);
+
+					echo " - Suple $suplente->apellido $suplente->nombre ($suplente->cedula)";
+				}
+
+				echo "<br/>";
+			}
+?>
+
+			</div>
+
+			<div class="col-xs-3 text-center">
+				<i class="fa fa-pencil fa-fw editar" title="Editar" onClick="moreInfo('moduloPlanificacion/Carga/editar.php', 'id=<?= $uc->id; ?>&carrera=<?= $carrera; ?>&sede=<?= $sede; ?>&periodo=<?= $periodo; ?>&mecs=<?= $mecs; ?>&periodoEstructura=<?= $periodoEstructura; ?>&profesor=<?= $carga->profesor; ?>')"></i>
+			</div>
+		</td>
+	</tr>
+
+<?php
+		}
+
+		if($n->n > $nS) {
+?>
+
 	<tr onClick="moreInfo('moduloPlanificacion/Carga/form.php', 'id=<?= $uc->id; ?>&carrera=<?= $carrera; ?>&sede=<?= $sede; ?>&periodo=<?= $periodo; ?>&mecs=<?= $mecs; ?>&periodoEstructura=<?= $periodoEstructura; ?>')">
-		<td class="text-center" style="color: #00005b; cursor: pointer; font-weight: bold;">
+		<td class="text-center" style="color: #00005b; cursor: pointer; font-weight: bold;" colspan="2">
 			Asignar profesor
 		</td>
 	</tr>
 
 <?php
+		}
 	}
 ?>
 

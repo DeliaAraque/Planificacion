@@ -9,6 +9,8 @@
 
 	$profesor = $_POST["profesor"];
 
+	$periodo = htmlspecialchars($_POST["periodo"], ENT_QUOTES);
+
 	$sql = "
 		select p.cedula as cedula, d.horas as dedicacion, p.condicion as condicion 
 		from profesor as p 
@@ -22,10 +24,10 @@
 		select ucm.\"horasTeoricas\" as ht, ucm.\"horasPracticas\" as hp, c.\"dividirHT\" as \"dividirHT\", s.multiplicador as multiplicador, s.grupos as grupos 
 		from carga as c 
 			join seccion as s on s.\"ID\"=c.\"idSeccion\" 
+			join periodo as p on p.\"ID\"=s.\"idPeriodo\" 
 			join \"mallaECS\" as mecs on mecs.id=s.\"idMECS\" 
-			join \"ucMalla\" as ucm on ucm.\"idMalla\"=mecs.\"idMalla\" and ucm.\"idUC\"=c.\"idUC\" 
-			join periodo as p on p.\"ID\"=s.\"idPeriodo\" and p.\"fechaFin\">current_date 
-		where c.\"idProfesor\"='$profesor->cedula'
+			join \"ucMalla\" as ucm on ucm.\"idMalla\"=mecs.\"idMalla\" and ucm.\"idUC\"=c.\"idUC\" and ucm.periodo=s.\"periodoEstructura\" 
+		where p.id='$periodo' and c.\"idProfesor\"='$profesor->cedula'
 	";
 
 	if($p->condicion != 3)

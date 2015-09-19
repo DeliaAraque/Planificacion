@@ -4,16 +4,58 @@
 
 // Validación
 
+	$carrera = htmlspecialchars($_POST["carrera"], ENT_QUOTES);
+
+	$sql = "select id from carrera where id='$carrera'";
+	$exe = pg_query($sigpa, $sql);
+	$carrera = pg_fetch_object($exe);
+
+	if(! $carrera->id) {
+		echo "Por aquí <strong>NO</strong> pasan inyecciones! :B";
+		exit;
+	}
+
+	$carrera = htmlspecialchars($_POST["carrera"], ENT_QUOTES);
+
+	$sede = htmlspecialchars($_POST["sede"], ENT_QUOTES);
+
+	$sql = "select id from sede where id='$sede'";
+	$exe = pg_query($sigpa, $sql);
+	$sede = pg_fetch_object($exe);
+
+	if(! $sede->id) {
+		echo "Por aquí <strong>NO</strong> pasan inyecciones! :B";
+		exit;
+	}
+
+	$sede = htmlspecialchars($_POST["sede"], ENT_QUOTES);
+
+	$unidadCurricular = htmlspecialchars($_POST["unidadCurricular"], ENT_QUOTES);
+
+	$sql = "select id from \"unidadCurricular\" where id='$unidadCurricular'";
+	$exe = pg_query($sigpa, $sql);
+	$unidadCurricular = pg_fetch_object($exe);
+
+	if(! $unidadCurricular->id) {
+		echo "Por aquí <strong>NO</strong> pasan inyecciones! :B";
+		exit;
+	}
+
+	$unidadCurricular = htmlspecialchars($_POST["unidadCurricular"], ENT_QUOTES);
+
 	if($_POST["nombre"]) {
 		$re = "^[A-ZÁÉÍÓÚÑ][a-záéíóúñA-ZÁÉÍÓÚÑ]*( [a-záéíóúñA-ZÁÉÍÓÚÑ]+)*$";
 
 		if(! ereg("$re", $_POST["nombre"])) {
-			echo "La sección indicada no cumple con el patrón necesario";
+			echo "El nuevo nombre no cumple con el patrón necesario";
 			exit;
 		}
 
-		$nombre = $_POST["nombre"];
+		$nombre = "'$_POST[nombre]'";
 	}
+
+	else
+		$nombre = "null";
 
 	$profesor = htmlspecialchars($_POST["profesor"], ENT_QUOTES);
 
@@ -21,7 +63,7 @@
 	$exe = pg_query($sigpa, $sql);
 	$profesor = pg_fetch_object($exe);
 
-	if(!$profesor->cedula) {
+	if(! $profesor->cedula) {
 		echo "Por aquí <strong>NO</strong> pasan inyecciones! :B";
 		exit;
 	}
@@ -47,12 +89,14 @@
 		}
 
 		if($_POST["suplente$seccion"]) {
+			$suplente = htmlspecialchars($_POST["suplente$seccion"], ENT_QUOTES);
+
 			$sql = "
 				select count(p.cedula) as n 
 				from persona as p 
 					join profesor as prof on prof.cedula=p.cedula 
-					join pertenece as per on per.\"idProfesor\"=prof.cedula
-				where prof.condicion='$condicion' and per.\"idCS\"=(select id from \"carreraSede\" where \"idCarrera\"='$carrera' and \"idSede\"='$sede') and prof.cedula='$_POST[suplente$seccion]'
+					join pertenece as per on per.\"idProfesor\"=prof.cedula 
+				where prof.condicion='1' and per.\"idCS\"=(select id from \"carreraSede\" where \"idCarrera\"='$carrera' and \"idSede\"='$sede') and prof.cedula='$suplente'
 			";
 			$exe = pg_query($sigpa, $sql);
 			$n = pg_fetch_object($exe);
@@ -64,42 +108,68 @@
 		}
 	}
 
-	$seccion = $_POST["seccion"];
+	$secciones = $_POST["seccion"];
 
 // --------------------
 
 	pg_query($sigpa, "begin");
 
-	$sql = "insert into seccion values(default, '$id', '$turno', '$multiplicador', $grupos, '$malla', (select \"ID\" from periodo where id='$periodo' and tipo='a' and \"idECS\"=(select id from \"estructuraCS\" where \"idEstructura\"='$estructura' and \"idCS\"=(select id from \"carreraSede\" where \"idCarrera\"='$carrera' and \"idSede\"='$sede'))), '$periodoEstructura')";
-	$exe = pg_query($sigpa, $sql);
+	$n = 0;
 
-// Si se guardó la sección correctamente
+	foreach($secciones as $seccion) {
+		$seccion = htmlspecialchars($seccion, ENT_QUOTES);
+		$seccionID = htmlspecialchars($_POST["ID$seccion"], ENT_QUOTES);
+		$dividirHT = (! isset($_POST["dividirHT$seccion"])) ? "false" : "true";
+		$suplente = ($_POST["suplente$seccion"]) ? $_POST["suplente$seccion"] : "null";
 
-	if($exe) {
+		$sql = "insert into carga values(default, $dividirHT, $nombre, '$profesor', '$seccionID', $suplente, '$unidadCurricular')";
+		$exe = pg_query($sigpa, $sql);
+
+// Si ocurrio un error asignando la carga
+
+		if(! $exe) {
+			echo "Ocurrió un error mientras el servidor intentaba guardar la información, por favor vuelva a intentarlo y si el error persiste comuníquelo al administrador del sistema&&error";
+			pg_query($sigpa, "rollback");
+			exit;
+		}
+
+// --------------------
+
+// Si se asignó la carga correctamente
 
 	// Agregar elemento al registro de acciones realizadas
 
-		$sql2 = "select nombre from carrera where id='$carrera'";
-		$exe = pg_query($sigpa, $sql2);
-		$carrera = pg_fetch_object($exe);
+		else {
+			$sql2 = "select apellido, nombre, cedula from persona where cedula='$profesor'";
+			$exe = pg_query($sigpa, $sql2);
+			$persona = pg_fetch_object($exe);
 
-		$sql = "insert into historial values('" . time() . "', '$_SESSION[nombre] $_SESSION[apellido] ($_SESSION[cedula])', 'Se agregó la sección <strong>$id</strong> del <strong>$periodoEstructura</strong> en <strong>$carrera->nombre</strong>', '" . htmlspecialchars($sql, ENT_QUOTES) . "')";
-		$exe = pg_query($sigpa, $sql);
+			$sql2 = "select \"periodoEstructura\" as \"periodoEstructura\" from seccion where \"ID\"='$seccionID'";
+			$exe = pg_query($sigpa, $sql2);
+			$periodoEstructura = pg_fetch_object($exe);
+			$periodoEstructura = $periodoEstructura->periodoEstructura;
+
+			$descripcion = "Se asignó la sección <strong>$seccion</strong> del <strong>$periodoEstructura</strong> al profesor <strong>$persona->apellido $persona->nombre ($persona->cedula)</strong>";
+
+			if($suplente != "null") {
+				$sql2 = "select apellido, nombre, cedula from persona where cedula='$suplente'";
+				$exe = pg_query($sigpa, $sql2);
+				$persona = pg_fetch_object($exe);
+
+				$descripcion .= ". Suple <strong>$persona->apellido $persona->nombre ($persona->cedula)</strong>";
+			}
+
+			$sql = "insert into historial values('" . (time() + $n) . "', '$_SESSION[nombre] $_SESSION[apellido] ($_SESSION[cedula])', '$descripcion', '" . htmlspecialchars($sql, ENT_QUOTES) . "')";
+			$exe = pg_query($sigpa, $sql);
+		}
 
 	// --------------------
 
-		echo "Se guardó satisfactóriamente&&success";
-		pg_query($sigpa, "commit");
-		exit;
+// --------------------
+
+		++$n;
 	}
 
-// --------------------
-
-// Si ocurrio un error guardando la sección
-
-	echo "Ocurrió un error mientras el servidor intentaba guardar la información, por favor vuelva a intentarlo y si el error persiste comuníquelo al administrador del sistema&&error";
-	pg_query($sigpa, "rollback");
-
-// --------------------
-
+	echo "Se asignó la carga satisfactóriamente&&success";
+	pg_query($sigpa, "commit");
 ?>
