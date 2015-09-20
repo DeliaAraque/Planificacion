@@ -72,7 +72,7 @@
 
 <?php
 		$sql = "
-			select per.apellido as \"apellidoProfesor\", per.nombre as \"nombreProfesor\", c.\"idProfesor\" as profesor, string_agg(concat_ws('&', s.id, c.\"idSuplente\"), '&&' order by s.id) as seccion 
+			select per.apellido as \"apellidoProfesor\", per.nombre as \"nombreProfesor\", c.\"idProfesor\" as profesor, string_agg(concat_ws('&', s.id, c.id, c.\"idSuplente\"), '&&' order by s.id) as seccion 
 			from carga as c 
 				join persona as per on per.cedula=c.\"idProfesor\" 
 				join seccion as s on s.\"ID\"=c.\"idSeccion\" 
@@ -88,8 +88,7 @@
 
 	<tr>
 		<td><?= "$carga->apellidoProfesor $carga->nombreProfesor ($carga->profesor)"; ?></td>
-		<td><div class="row">
-			<div class="col-xs-9">
+		<td>
 
 <?php
 			$secciones = explode("&&", $carga->seccion);
@@ -99,9 +98,9 @@
 				$nS = 0;
 
 			foreach($secciones as $seccion) {
-				list($seccion, $suplente) = explode("&", $seccion);
+				list($seccion, $idCarga, $suplente) = explode("&", $seccion);
 
-				echo $seccion;
+				echo "<span>$seccion";
 				
 				if($suplente) {
 					$sql = "select apellido, nombre, cedula from persona where cedula='$suplente'";
@@ -110,16 +109,13 @@
 
 					echo " - Suple $suplente->apellido $suplente->nombre ($suplente->cedula)";
 				}
-
-				echo "<br/>";
-			}
 ?>
 
-			</div>
+			&nbsp;<i class="fa fa-times fa-fw eliminar" onClick="if(confirm('¿Realmente desea desasignarle la sección <?= $seccion; ?> al profesor <?= "$carga->apellidoProfesor $carga->nombreProfesor ($carga->profesor)"; ?>?')) { sendReq('moduloPlanificacion/Carga/eliminar.php', 'id=<?= $idCarga ?>'); this.parentNode.parentNode.removeChild(this.parentNode); }" title="Desasignar"></i><br/></span>
 
-			<div class="col-xs-3 text-center">
-				<i class="fa fa-pencil fa-fw editar" title="Editar" onClick="moreInfo('moduloPlanificacion/Carga/editar.php', 'id=<?= $uc->id; ?>&carrera=<?= $carrera; ?>&sede=<?= $sede; ?>&periodo=<?= $periodo; ?>&mecs=<?= $mecs; ?>&periodoEstructura=<?= $periodoEstructura; ?>&profesor=<?= $carga->profesor; ?>')"></i>
-			</div>
+<?php
+			}
+?>
 		</td>
 	</tr>
 
