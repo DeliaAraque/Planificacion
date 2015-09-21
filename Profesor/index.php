@@ -42,7 +42,12 @@
 						<td>
 
 <?php
-		if(($profesor->correo == "Sin asignar") || ($profesor->direccion == "Sin asignar") || ($profesor->telefono == "Sin asignar") || ($profesor->categoria == "No") || ($profesor->condicion == "0") || ($profesor->dedicacion == "No") || ($profesor->profesion == "0"))
+		$sql = "select count(\"idProfesor\") as n from pertenece where \"idProfesor\"='$profesor->cedula'";
+		$exe2 = pg_query($sigpa, $sql);
+		$n = pg_fetch_object($exe2);
+		$n = $n->n;
+
+		if(($profesor->correo == "Sin asignar") || ($profesor->direccion == "Sin asignar") || ($profesor->telefono == "Sin asignar") || ($profesor->categoria == "No") || ($profesor->condicion == "0") || ($profesor->dedicacion == "No") || ($profesor->profesion == "0") || ($n == "0"))
 			echo "<i class=\"fa fa-exclamation-triangle alerta\" onClick=\"embem('moduloPlanificacion/Profesor/editar.php', '#page-wrapper', 'cedula=$profesor->cedula')\" title=\"Este profesor necesita ser completado\"></i>";
 ?>
 

@@ -132,7 +132,7 @@
 	$sql = "
 		select s.\"ID\" as \"ID\", s.id as id, s.grupos as grupos, s.turno as turno, s.multiplicador as multiplicador 
 		from seccion as s 
-		where s.\"idPeriodo\"=(select \"ID\" from periodo where id='$periodo' and tipo='a' and \"idECS\"=(select \"idECS\" from \"mallaECS\" where id='$mecs')) and s.\"periodoEstructura\"='$periodoEstructura' 
+		where s.\"idPeriodo\"=(select \"ID\" from periodo where id='$periodo' and tipo='a' and \"idECS\"=(select \"idECS\" from \"mallaECS\" where id='$mecs')) and s.\"periodoEstructura\"='$periodoEstructura' and s.\"idMECS\"='$mecs' 
 		order by s.id
 	";
 	$exe = pg_query($sigpa, $sql);
