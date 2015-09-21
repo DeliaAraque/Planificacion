@@ -134,7 +134,7 @@
 		$exe2=pg_query($sigpa, $sql);
 
 		while($profesor = pg_fetch_object($exe2)) {
-			$sql="select count(\"idCoordinador\") as n from \"carreraSede\" where \"idCarrera\"!='$carrera->id' and \"idCoordinador\"='$cedula'";
+			$sql="select count(\"idCoordinador\") as n from \"carreraSede\" where \"idCarrera\"!='$carrera->id' and \"idCoordinador\"='$profesor->cedula'";
 			$exe3=pg_query($sigpa, $sql);
 			$nProf = pg_fetch_object($exe3);
 
