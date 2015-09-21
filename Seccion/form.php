@@ -19,13 +19,13 @@
 			<div class="form-group"> 
 				Turno:
 				<div class="radio-inline">
-					<label class="radio-inline"><input type="radio" name="turno" value="d" checked="checked" required="required"> Diurno </label>
-					<label class="radio-inline"><input type="radio" name="turno" value="n" required="required"> Nocturno </label>
+					<label class="radio-inline"><input type="radio" name="turno" value="d" onClick="document.seccion.multiplicador.value='1';" checked="checked" required="required"> Diurno </label>
+					<label class="radio-inline"><input type="radio" name="turno" value="n" onClick="document.seccion.multiplicador.value='1.5'" required="required"> Nocturno </label>
 				</div>
 			</div>
 
 			<div class="form-group">
-				<input type="text" name="multiplicador" placeholder="Multiplicador" class="form-control" pattern="^[0-9]+(\.[0-9])*$" required="required" />
+				<input type="text" name="multiplicador" placeholder="Multiplicador" value="1" class="form-control" pattern="^[0-9]+(\.[0-9])*$" required="required" />
 				<p class="help-block">El multiplicador determina si las horas de las unidades curriculares deben aumentar o disminuir según el turno. Ej: 1.5.</p>
 			</div>
 
