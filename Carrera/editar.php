@@ -114,7 +114,8 @@
 				from pertenece as per
 					join profesor as prof on prof.cedula=per.\"idProfesor\" 
 					join persona as p on p.cedula=prof.cedula 
-				where per.\"idCS\"=(select id from \"carreraSede\" where \"idCarrera\"='$carrera->id' and \"idSede\"='$sede->id') 
+					join condicion as con on con.id=prof.condicion
+				where con.id='3' and per.\"idCS\"=(select id from \"carreraSede\" where \"idCarrera\"='$carrera->id' and \"idSede\"='$sede->id') 
 				order by p.apellido, p.nombre, p.cedula
 			";
 		}
@@ -124,6 +125,8 @@
 				select p.cedula as cedula, p.apellido as apellido, p.nombre as nombre 
 				from persona as p 
 					join profesor as prof on prof.cedula=p.cedula 
+					join condicion as con on con.id=prof.condicion
+				where con.id='3' 
 				order by p.apellido, p.nombre, p.cedula
 			";
 		}
