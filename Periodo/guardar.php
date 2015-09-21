@@ -134,6 +134,8 @@
 
 	pg_query($sigpa, "begin");
 
+	$n = 0;
+
 	foreach($carreras as $carrera) {
 		$sql = "insert into periodo values(default, '$id', '$fechaInicioP', '$fechaFinP', 'p', '$carrera')";
 		$exe = pg_query($sigpa, $sql);
@@ -147,14 +149,11 @@
 
 	// Agregar elemento al registro de acciones realizadas
 
-			$sql = "insert into historial values('" . time() . "', '$_SESSION[nombre] $_SESSION[apellido] ($_SESSION[cedula])', 'Se activó el nuevo periodo <strong>$id</strong>', '" . htmlspecialchars($sql, ENT_QUOTES) . "\n\n" . htmlspecialchars($sql2, ENT_QUOTES) . "')";
+			$sql = "insert into historial values('" . (time() + $n) . "', '$_SESSION[nombre] $_SESSION[apellido] ($_SESSION[cedula])', 'Se activó el nuevo periodo <strong>$id</strong>', '" . htmlspecialchars($sql, ENT_QUOTES) . "\n\n" . htmlspecialchars($sql2, ENT_QUOTES) . "')";
 			$exe = pg_query($sigpa, $sql);
 
 	// --------------------
 
-			echo "Se guardó satisfactóriamente&&success";
-			pg_query($sigpa, "commit");
-			exit;
 		}
 
 // --------------------
@@ -165,8 +164,13 @@
 			echo "Ocurrió un error mientras el servidor intentaba guardar la información, por favor vuelva a intentarlo y si el error persiste comuníquelo al administrador del sistema&&error";
 			pg_query($sigpa, "rollback");
 		}
+
+		++$n;
 	}
 
 // --------------------
 
+	echo "Se guardó satisfactóriamente&&success";
+	pg_query($sigpa, "commit");
+	exit;
 ?>
