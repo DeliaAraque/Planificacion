@@ -61,6 +61,7 @@
 							</div>
 
 							<div class="col-xs-5 col-sm-5 col-md-6 col-lg-5 text-center">
+								<i class="fa fa-search fa-fw consultar" title="Mas información" onClick="moreInfo('moduloPlanificacion/Profesor/consultar.php', 'cedula=<?= $profesor->cedula ?>')"></i>
 								<i class="fa fa-pencil fa-fw editar" title="Editar" onClick="embem('moduloPlanificacion/Profesor/editar.php', '#page-wrapper', 'cedula=<?= $profesor->cedula ?>')"></i>
 								<i class="fa fa-trash-o fa-fw eliminar" onClick="if(confirm('¿Realmente desea eliminar a <?= "$profesor->apellido $profesor->nombre ($profesor->cedula)"; ?>?')) sendReq('../../script/eliminar.php', 'tabla=persona&campo=cedula&valor=<?= $profesor->cedula ?>', 'moduloPlanificacion/Profesor/index.php')" title="Eliminar"></i>
 							</div>
