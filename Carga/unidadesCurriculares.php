@@ -87,7 +87,7 @@
 ?>
 
 	<tr>
-		<td><?= "$carga->apellidoProfesor $carga->nombreProfesor ($carga->profesor)"; ?></td>
+		<td><a href="javascript: moreInfo('moduloPlanificacion/Profesor/consultar.php', 'cedula=<?= $carga->profesor; ?>')"><?= "$carga->apellidoProfesor $carga->nombreProfesor ($carga->profesor)"; ?></a></td>
 		<td>
 
 <?php
@@ -107,7 +107,7 @@
 					$exe3 = pg_query($sigpa, $sql);
 					$suplente = pg_fetch_object($exe3);
 
-					echo " - Suple $suplente->apellido $suplente->nombre ($suplente->cedula)";
+					echo " - Suple <a href=\"javascript: moreInfo('moduloPlanificacion/Profesor/consultar.php', 'cedula=$suplente->cedula')\">$suplente->apellido $suplente->nombre ($suplente->cedula)</a>";
 				}
 ?>
 
