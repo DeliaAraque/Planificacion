@@ -111,7 +111,7 @@
 				}
 
 				if($carga->fechaFin > date("Y-m-d"))
-					echo "&nbsp;<i class=\"fa fa-times fa-fw eliminar\" onClick=\"if(confirm('¿Realmente desea desasignarle la sección <?= $seccion; ?> al profesor <?= \"$carga->apellidoProfesor $carga->nombreProfesor ($carga->profesor)\"; ?>?')) { sendReq('moduloPlanificacion/Carga/eliminar.php', 'id=<?= $idCarga ?>'); this.parentNode.parentNode.removeChild(this.parentNode); }\" title=\"Desasignar\"></i>";
+					echo "&nbsp;<i class=\"fa fa-times fa-fw eliminar\" onClick=\"if(confirm('¿Realmente desea desasignarle la sección $seccion al profesor $carga->apellidoProfesor $carga->nombreProfesor ($carga->profesor)?')) { sendReq('moduloPlanificacion/Carga/eliminar.php', 'id=$idCarga'); this.parentNode.parentNode.removeChild(this.parentNode); }\" title=\"Desasignar\"></i>";
 ?>
 
 			<br/></span>
