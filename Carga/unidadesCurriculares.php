@@ -72,13 +72,13 @@
 
 <?php
 		$sql = "
-			select per.apellido as \"apellidoProfesor\", per.nombre as \"nombreProfesor\", c.\"idProfesor\" as profesor, string_agg(concat_ws('&', s.id, c.id, c.\"idSuplente\"), '&&' order by s.id) as seccion 
+			select per.apellido as \"apellidoProfesor\", per.nombre as \"nombreProfesor\", c.\"idProfesor\" as profesor, p.\"fechaFin\" as \"fechaFin\", string_agg(concat_ws('&', s.id, c.id, c.\"idSuplente\"), '&&' order by s.id) as seccion 
 			from carga as c 
 				join persona as per on per.cedula=c.\"idProfesor\" 
 				join seccion as s on s.\"ID\"=c.\"idSeccion\" 
 				join periodo as p on p.\"ID\"=s.\"idPeriodo\" 
 			where c.\"idUC\"='$uc->id' and p.id='$periodo' 
-			group by per.apellido, per.nombre, c.\"idProfesor\" 
+			group by per.apellido, per.nombre, c.\"idProfesor\", p.\"fechaFin\" 
 			order by per.apellido, per.nombre, c.\"idProfesor\"
 		";
 		$exe2 = pg_query($sigpa, $sql);
@@ -109,9 +109,12 @@
 
 					echo " - Suple <a href=\"javascript: moreInfo('moduloPlanificacion/Profesor/consultar.php', 'cedula=$suplente->cedula')\">$suplente->apellido $suplente->nombre ($suplente->cedula)</a>";
 				}
+
+				if($carga->fechaFin > date("Y-m-d"))
+					echo "&nbsp;<i class=\"fa fa-times fa-fw eliminar\" onClick=\"if(confirm('¿Realmente desea desasignarle la sección <?= $seccion; ?> al profesor <?= \"$carga->apellidoProfesor $carga->nombreProfesor ($carga->profesor)\"; ?>?')) { sendReq('moduloPlanificacion/Carga/eliminar.php', 'id=<?= $idCarga ?>'); this.parentNode.parentNode.removeChild(this.parentNode); }\" title=\"Desasignar\"></i>";
 ?>
 
-			&nbsp;<i class="fa fa-times fa-fw eliminar" onClick="if(confirm('¿Realmente desea desasignarle la sección <?= $seccion; ?> al profesor <?= "$carga->apellidoProfesor $carga->nombreProfesor ($carga->profesor)"; ?>?')) { sendReq('moduloPlanificacion/Carga/eliminar.php', 'id=<?= $idCarga ?>'); this.parentNode.parentNode.removeChild(this.parentNode); }" title="Desasignar"></i><br/></span>
+			<br/></span>
 
 <?php
 			}
@@ -123,6 +126,7 @@
 		}
 
 		if($n->n > $nS) {
+			if($carga->fechaFin > date("Y-m-d")) {
 ?>
 
 	<tr onClick="moreInfo('moduloPlanificacion/Carga/form.php', 'id=<?= $uc->id; ?>&carrera=<?= $carrera; ?>&sede=<?= $sede; ?>&periodo=<?= $periodo; ?>&mecs=<?= $mecs; ?>&periodoEstructura=<?= $periodoEstructura; ?>')">
@@ -132,6 +136,7 @@
 	</tr>
 
 <?php
+			}
 		}
 	}
 ?>

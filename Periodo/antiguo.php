@@ -48,7 +48,16 @@
 						<td><?php $fecha = explode("-", $periodo->fechaInicio); echo "$fecha[2]/$fecha[1]/$fecha[0]"; ?></td>
 						<td><?php $fecha = explode("-", $periodo->fechaFin); echo "$fecha[2]/$fecha[1]/$fecha[0]"; ?></td>
 						<td><?= $periodo->id; ?></td>
-						<td><?= "$periodo->carrera - $periodo->sede ($periodo->estructura)"; ?></td>
+						<td><div class="row">
+							<div class="col-xs-7 col-sm-7 col-md-6 col-lg-7">
+								<?= "$periodo->carrera - $periodo->sede ($periodo->estructura)"; ?>
+							</div>
+
+							<div class="col-xs-5 col-sm-5 col-md-6 col-lg-5 text-center">
+								<i class="fa fa-pencil fa-fw editar" title="Editar" onClick="embem('moduloPlanificacion/Periodo/editar.php', '#page-wrapper', 'id=<?= $periodo->id ?>&ecs=<?= $periodo->idECS ?>')"></i>
+								<i class="fa fa-trash-o fa-fw eliminar" onClick="if(confirm('¿Realmente desea eliminar <?= $periodo->id ?> de la carrera <?= "$periodo->carrera - $periodo->sede ($periodo->estructura)"; ?>?')) sendReq('moduloPlanificacion/Periodo/eliminar.php', 'id=<?= $periodo->id ?>&ecs=<?= $periodo->idECS ?>', 'moduloPlanificacion/Periodo/index.php')" title="Eliminar"></i>
+							</div>
+						</div></td>
 					</tr>
 
 <?php
