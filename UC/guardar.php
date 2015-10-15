@@ -45,16 +45,6 @@
 
 	$nombre = $_POST["nombre"];
 
-	$sql = "select COUNT(id) as n from \"unidadCurricular\" where nombre='$nombre' and \"idCarrera\"='$carrera'";
-	$exe = pg_query($sigpa, $sql);
-	$n = pg_fetch_object($exe);
-	$n = $n->n;
-
-	if($n) {
-		echo "Ya existe una unidad curricular con ese nombre para esa carrera";
-		exit;
-	}
-
 	$renombrable = (! isset($_POST["renombrable"])) ? "false" : "true";
 
 	$eje = htmlspecialchars($_POST["eje"], ENT_QUOTES);
