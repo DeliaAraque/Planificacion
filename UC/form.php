@@ -17,7 +17,7 @@
 			</div>
 
 			<div class="form-group">
-				<input type="text" name="nombre" placeholder="Nombre" class="form-control" pattern="^[A-ZÁÉÍÓÚÑ][a-záéíóúñA-ZÁÉÍÓÚÑ]*( [a-záéíóúñA-ZÁÉÍÓÚÑ]+)*$" required="required" />
+				<input type="text" name="nombre" placeholder="Nombre" class="form-control" pattern="^[A-ZÁÉÍÓÚÑ][a-záéíóúñA-ZÁÉÍÓÚÑ]*,?( [a-záéíóúñA-ZÁÉÍÓÚÑ]+,?)*$" required="required" />
 				<p class="help-block">Solo están permitidos caracteres alfabéticos y el primero debe estar en mayúculas, el uso de las mismas en los demás caracteres viene dado según su criterio. Ej: Algorítmica y Programación.</p>
 			</div>
 

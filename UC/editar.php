@@ -27,7 +27,7 @@
 
 			<div class="form-group">
 				Nombre:
-				<input type="text" name="nombre" placeholder="Nombre" value="<?= $uc->nombre; ?>" class="form-control" pattern="^[A-ZÁÉÍÓÚÑ][a-záéíóúñA-ZÁÉÍÓÚÑ]*( [a-záéíóúñA-ZÁÉÍÓÚÑ]+)*$" required="required" />
+				<input type="text" name="nombre" placeholder="Nombre" value="<?= $uc->nombre; ?>" class="form-control" pattern="^[A-ZÁÉÍÓÚÑ][a-záéíóúñA-ZÁÉÍÓÚÑ]*,?( [a-záéíóúñA-ZÁÉÍÓÚÑ]+,?)*$" required="required" />
 				<input type="hidden" name="nombreAnt" value="<?= $uc->nombre; ?>" />
 				<p class="help-block">Solo están permitidos caracteres alfabéticos y el primero debe estar en mayúculas, el uso de las mismas en los demás caracteres viene dado según su criterio. Ej: Algorítmica y Programación.</p>
 			</div>

@@ -50,7 +50,7 @@
 	$carrera = htmlspecialchars($_POST["carrera"], ENT_QUOTES);
 	$carreraAnt = htmlspecialchars($_POST["carreraAnt"], ENT_QUOTES);
 
-	$re = "^[A-ZÁÉÍÓÚÑ][a-záéíóúñA-ZÁÉÍÓÚÑ]*( [a-záéíóúñA-ZÁÉÍÓÚÑ]+)*$";
+	$re = "^[A-ZÁÉÍÓÚÑ][a-záéíóúñA-ZÁÉÍÓÚÑ]*,?( [a-záéíóúñA-ZÁÉÍÓÚÑ]+,?)*$";
 
 	if((! ereg("$re", $_POST["nombre"])) || (! ereg("$re", $_POST["nombreAnt"]))) {
 		echo "El nombre indicado no cumple con el patrón necesario";
