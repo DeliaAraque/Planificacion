@@ -47,13 +47,13 @@
 	foreach($estructura->periodos as $periodo) {
 ?>
 
-	<tr><th class="text-center" style="color: white; background-color: #00005b;"><?= "$periodo->nombre ($periodo->id)"; ?></th></tr>
+	<tr id="<?= $periodo->id; ?>"><th class="text-center" style="color: white; background-color: #00005b;"><?= "$periodo->nombre ($periodo->id)"; ?></th></tr>
 
 <?php
 		if(!$periodo->subperiodos) {
 ?>
 
-	<tr id="<?= $periodo->id; ?>"><td>
+	<tr><td>
 		<div class="form-group row">
 			<div class="form-group col-xs-11">
 				<select name="unidadCurricular<?= $n; ?>" class="form-control" onChange="noRepetida(this.value)" required="required">
@@ -109,9 +109,9 @@
 			foreach($periodo->subperiodos as $subperiodo) {
 ?>
 
-	<tr><th class="text-center" style="color: #00005b;"><?= "$subperiodo->nombre ($subperiodo->id)"; ?></th></tr>
+	<tr id="<?= "$periodo->id-$subperiodo->id"; ?>"><th class="text-center" style="color: #00005b;"><?= "$subperiodo->nombre ($subperiodo->id)"; ?></th></tr>
 
-	<tr id="<?= "$periodo->id-$subperiodo->id"; ?>"><td>
+	<tr><td>
 		<div class="form-group row">
 			<div class="form-group col-xs-11">
 				<select name="unidadCurricular<?= $n; ?>" class="form-control" onChange="noRepetida(this.value)" required="required">
@@ -249,8 +249,7 @@
 			tr.className = codigoUC;
 			tr.innerHTML = "<td class=\"text-center\"><strong>" + nombreUC + contenido + "</strong></td>";
 
-			target = document.querySelector("#" + periodo + "-" + lista[lista.indexOf(subperiodo) + i]);
-			target.parentNode.insertBefore(tr, target);
+			$(tr).insertAfter("#" + periodo + "-" + lista[lista.indexOf(subperiodo) + i]);
 
 			cantidad.value = parseInt(cantidad.value) + 1;
 		}

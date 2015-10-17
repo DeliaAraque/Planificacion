@@ -164,7 +164,7 @@
 	foreach($estructura->periodos as $periodo) {
 ?>
 
-					<tr><th class="text-center" style="color: white; background-color: #00005b;"><?= "$periodo->nombre ($periodo->id)"; ?></th></tr>
+					<tr id="<?= $periodo->id; ?>"><th class="text-center" style="color: white; background-color: #00005b;"><?= "$periodo->nombre ($periodo->id)"; ?></th></tr>
 
 <?php
 		if(!$periodo->subperiodos) {
@@ -181,7 +181,7 @@
 				$optionsBan .= ",\"$unidadCurricular->id\"";
 ?>
 
-					<tr id="<?= $periodo->id; ?>" class="<?= $unidadCurricular->id; ?>"><td>
+					<tr class="<?= $unidadCurricular->id; ?>"><td>
 						<div class="form-group row">
 							<div class="form-group col-xs-11">
 								<strong><?= "$unidadCurricular->nombre ($unidadCurricular->id)"; ?></strong>
@@ -239,7 +239,7 @@
 			foreach($periodo->subperiodos as $subperiodo) {
 ?>
 
-					<tr><th class="text-center" style="color: #00005b;"><?= "$subperiodo->nombre ($subperiodo->id)"; ?></th></tr>
+					<tr id="<?= "$periodo->id-$subperiodo->id"; ?>"><th class="text-center" style="color: #00005b;"><?= "$subperiodo->nombre ($subperiodo->id)"; ?></th></tr>
 
 <?php
 
@@ -387,8 +387,7 @@
 							tr.className = codigoUC;
 							tr.innerHTML = "<td class=\"text-center\"><strong>" + nombreUC + contenido + "</strong></td>";
 
-							target = document.querySelector("#" + periodo + "-" + lista[lista.indexOf(subperiodo) + i]);
-							target.parentNode.insertBefore(tr, target);
+							$(tr).insertAfter("#" + periodo + "-" + lista[lista.indexOf(subperiodo) + i]);
 
 							cantidad.value = parseInt(cantidad.value) + 1;
 						}
