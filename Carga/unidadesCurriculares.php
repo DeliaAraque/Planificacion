@@ -77,38 +77,52 @@
 
 <?php
 		$sql = "
-			select per.apellido as \"apellidoProfesor\", per.nombre as \"nombreProfesor\", c.\"idProfesor\" as profesor, string_agg(concat_ws('&', s.id, c.id, c.\"idSuplente\"), '&&' order by s.id) as seccion 
-			from carga as c 
-				join persona as per on per.cedula=c.\"idProfesor\" 
-				join seccion as s on s.\"ID\"=c.\"idSeccion\" 
-				join periodo as p on p.\"ID\"=s.\"idPeriodo\" 
-			where c.\"idUC\"='$uc->id' and p.id='$periodo' 
-			group by per.apellido, per.nombre, c.\"idProfesor\" 
-			order by per.apellido, per.nombre, c.\"idProfesor\"
+			select s.\"ID\" as \"ID\", s.id as id, s.grupos as grupos, s.turno as turno 
+			from seccion as s 
+			where s.\"idPeriodo\"=(select \"ID\" from periodo where id='$periodo' and tipo='a' and \"idECS\"=(select \"idECS\" from \"mallaECS\" where id='$mecs')) and s.\"periodoEstructura\"='$periodoEstructura' and s.\"idMECS\"='$mecs' 
+			order by s.id
 		";
 		$exe2 = pg_query($sigpa, $sql);
 
-		while($carga = pg_fetch_object($exe2)) {
+		while($seccion = pg_fetch_object($exe2)) {
 ?>
 
 	<tr>
-		<td><a href="javascript: moreInfo('moduloPlanificacion/Profesor/consultar.php', 'cedula=<?= $carga->profesor; ?>')"><?= "$carga->apellidoProfesor $carga->nombreProfesor ($carga->profesor)"; ?></a></td>
 		<td>
 
 <?php
-			$secciones = explode("&&", $carga->seccion);
-			$nS += count($secciones);
+			echo $seccion->id;
 
-			if(!$nS)
-				$nS = 0;
+			if($seccion->grupos == "t")
+				echo " <i class=\"fa fa-fw fa-users\" title=\"Se divide en grupos\"></i>";
 
-			foreach($secciones as $seccion) {
-				list($seccion, $idCarga, $suplente) = explode("&", $seccion);
+			if($seccion->turno == "n")
+				echo " <i class=\"fa fa-fw fa-moon-o\" title=\"Nocturna\"></i>";
+?>
 
-				echo "<span>$seccion";
-				
-				if($suplente) {
-					$sql = "select apellido, nombre, cedula from persona where cedula='$suplente'";
+		</td>
+		<td>
+
+<?php
+			$sql = "
+				select per.apellido as \"apellido\", per.nombre as \"nombre\", c.\"idProfesor\" as cedula, c.id as carga, c.\"idSuplente\" as suplente 
+				from carga as c 
+					join persona as per on per.cedula=c.\"idProfesor\" 
+					join seccion as s on s.\"ID\"=c.\"idSeccion\" 
+				where c.\"idUC\"='$uc->id' and c.\"idSeccion\"='$seccion->ID'
+			";
+			$exe3 = pg_query($sigpa, $sql);
+			$profesor = pg_fetch_object($exe3);
+
+			if($profesor) {
+				++$nS;
+?>
+
+			<a href="javascript: moreInfo('moduloPlanificacion/Profesor/consultar.php', 'cedula=<?= $profesor->cedula; ?>')"><?= "$profesor->apellido $profesor->nombre ($profesor->cedula)"; ?></a>
+
+<?php
+				if($profesor->suplente) {
+					$sql = "select apellido, nombre, cedula from persona where cedula='$profesor->suplente'";
 					$exe3 = pg_query($sigpa, $sql);
 					$suplente = pg_fetch_object($exe3);
 
@@ -116,14 +130,13 @@
 				}
 
 				if($fechaFin > date("Y-m-d"))
-					echo "&nbsp;<i class=\"fa fa-times fa-fw eliminar\" onClick=\"if(confirm('¿Realmente desea desasignarle la sección $seccion al profesor $carga->apellidoProfesor $carga->nombreProfesor ($carga->profesor)?')) { sendReq('moduloPlanificacion/Carga/eliminar.php', 'id=$idCarga'); unidadesCurriculares(); }\" title=\"Desasignar\"></i>";
-?>
-
-			<br/></span>
-
-<?php
+					echo "&nbsp;<i class=\"fa fa-times fa-fw eliminar\" onClick=\"if(confirm('¿Realmente desea desasignarle la sección $seccion->id al profesor $profesor->apellido $profesor->nombre ($profesor->cedula)?')) { sendReq('moduloPlanificacion/Carga/eliminar.php', 'id=$profesor->carga'); unidadesCurriculares(); }\" title=\"Desasignar\"></i>";
 			}
+
+			else
+				echo "No se ha asignado un profesor a esta sección";
 ?>
+
 		</td>
 	</tr>
 
