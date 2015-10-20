@@ -34,7 +34,7 @@
 			join profesor as prof on prof.cedula=p.cedula 
 			join pertenece as per on per.\"idProfesor\"=prof.cedula
 		where prof.condicion='$condicion' and per.\"idCS\"=(select id from \"carreraSede\" where \"idCarrera\"='$carrera' and \"idSede\"='$sede') 
-		order by p.cedula, p.apellido, p.nombre
+		order by p.apellido, p.nombre, p.cedula
 	";
 	$exe = pg_query($sigpa, $sql);
 

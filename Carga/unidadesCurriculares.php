@@ -129,7 +129,7 @@
 					echo " - Suple <a href=\"javascript: moreInfo('moduloPlanificacion/Profesor/consultar.php', 'cedula=$suplente->cedula')\">$suplente->apellido $suplente->nombre ($suplente->cedula)</a>";
 				}
 
-				if($fechaFin > date("Y-m-d"))
+				if($fechaFin >= date("Y-m-d"))
 					echo "&nbsp;<i class=\"fa fa-times fa-fw eliminar\" onClick=\"if(confirm('¿Realmente desea desasignarle la sección $seccion->id al profesor $profesor->apellido $profesor->nombre ($profesor->cedula)?')) { sendReq('moduloPlanificacion/Carga/eliminar.php', 'id=$profesor->carga'); unidadesCurriculares(); }\" title=\"Desasignar\"></i>";
 			}
 
@@ -144,7 +144,7 @@
 		}
 
 		if($n->n > $nS) {
-			if($fechaFin > date("Y-m-d")) {
+			if($fechaFin >= date("Y-m-d")) {
 ?>
 
 	<tr onClick="moreInfo('moduloPlanificacion/Carga/form.php', 'id=<?= $uc->id; ?>&carrera=<?= $carrera; ?>&sede=<?= $sede; ?>&periodo=<?= $periodo; ?>&mecs=<?= $mecs; ?>&periodoEstructura=<?= $periodoEstructura; ?>')">
