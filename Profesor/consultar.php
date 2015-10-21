@@ -127,7 +127,7 @@
 
 <?php
 		$sql = "
-			select car.\"idProfesor\" as profesor, car.\"idSuplente\" as suplente, p.id as periodo, sec.id as seccion, c.nombre as carrera, s.nombre as sede, sec.\"periodoEstructura\" as \"periodoEstructura\", uc.nombre as \"unidadCurricular\", car.\"nuevoNombre\" as \"nuevoNombre\" 
+			select car.\"idProfesor\" as profesor, car.\"idSuplente\" as suplente, p.id as periodo, sec.id as seccion, c.nombre as carrera, s.nombre as sede, sec.\"periodoEstructura\" as \"periodoEstructura\", uc.nombre as \"unidadCurricular\", car.\"nuevoNombre\" as \"nuevoNombre\", sec.turno as turno, sec.grupos as grupos 
 			from carga as car 
 				join seccion as sec on sec.\"ID\"=car.\"idSeccion\" 
 				join periodo as p on p.\"ID\"=sec.\"idPeriodo\" 
@@ -135,9 +135,10 @@
 				join \"carreraSede\" as cs on cs.id=ecs.\"idCS\" 
 				join carrera as c on c.id=cs.\"idCarrera\" 
 				join sede as s on s.id=cs.\"idSede\"
+				join \"mallaECS\" as mecs on mecs.id=sec.\"idMECS\" 
 				join \"unidadCurricular\" as uc on uc.id=car.\"idUC\" 
 			where car.\"idProfesor\"='$profesor->cedula' or car.\"idSuplente\"='$profesor->cedula' 
-			order by p.id desc, c.nombre, s.nombre, sec.\"periodoEstructura\", uc.nombre
+			order by p.id desc, c.nombre, s.nombre, sec.\"periodoEstructura\", uc.nombre, sec.id
 		";
 		$exe = pg_query($sigpa, $sql);
 
@@ -152,6 +153,12 @@
 
 <?php
 			echo $carga->seccion;
+
+			if($carga->grupos == "t")
+				echo " <i class=\"fa fa-fw fa-users\" title=\"Se divide en grupos\"></i>";
+
+			if($carga->turno == "n")
+				echo " <i class=\"fa fa-fw fa-moon-o\" title=\"Nocturna\"></i>";
 
 			if($carga->profesor != $profesor->cedula) {
 				$sql = "select apellido, nombre, cedula from persona where cedula='$carga->profesor'";
