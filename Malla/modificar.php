@@ -254,15 +254,12 @@
 		$whereUCM = "where \"idMalla\"='$id'";  // where para desasignar las unidades curriculares no seleccionadas de la malla
 
 		for($i = 0; $i < count($unidadesCurriculares); ++$i) {
-			$whereUCM .= "and (\"idUC\"!='$unidadesCurriculares[$i]' and periodo!='$periodos[$i]')";
-
-			$sql = "select count(id) as n from \"ucMalla\" where \"idMalla\"='$id' and \"idUC\"='$unidadesCurriculares[$i]' and periodo='$periodos[$i]'";
+			$sql = "select id from \"ucMalla\" where \"idMalla\"='$id' and \"idUC\"='$unidadesCurriculares[$i]' and periodo='$periodos[$i]'";
 			$exe = pg_query($sigpa, $sql);
-			$nUCM = pg_fetch_object($exe);
-			$nUCM = $nUCM->n;
+			$UCM = pg_fetch_object($exe);
 
-			if($nUCM == 0) {
-				$sql = "insert into \"ucMalla\" values(default, '$horasTeoricas[$i]', '$horasPracticas[$i]', $tipos[$i], '$periodos[$i]', '$unidadesCurriculares[$i]', '$id')";
+			if(! $UCM->id) {
+				$sql = "insert into \"ucMalla\" values(default, '$horasTeoricas[$i]', '$horasPracticas[$i]', $tipos[$i], '$periodos[$i]', '$unidadesCurriculares[$i]', '$id') returning id";
 				$exe = pg_query($sigpa, $sql);
 
 				if(! $exe) {
@@ -275,8 +272,13 @@
 					exit;
 				}
 
+				$UCM = pg_fetch_object($exe);
+				$whereUCM .= " and id!='$UCM->id'";
+
 				continue;
 			}
+
+			$whereUCM .= " and id!='$UCM->id'";
 
 			$sql = "update \"ucMalla\" set \"horasTeoricas\"='$horasTeoricas[$i]', \"horasPracticas\"='$horasPracticas[$i]', tipo=$tipos[$i] where \"idMalla\"='$id' and \"idUC\"='$unidadesCurriculares[$i]' and periodo='$periodos[$i]'";
 			$exe = pg_query($sigpa, $sql);
