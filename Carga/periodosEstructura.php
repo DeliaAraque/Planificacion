@@ -23,6 +23,13 @@
 
 	$periodo = $_POST["periodo"];
 
+	$re = "^[0-9]+$";
+
+	if(! ereg("$re", $_POST["mecs"]))
+		exit;
+
+	$mecs = $_POST["mecs"];
+
 	$sql="
 		select sec.\"periodoEstructura\" as \"periodoEstructura\" 
 		from seccion as sec 
@@ -31,7 +38,7 @@
 			join \"carreraSede\" as cs on cs.id=ecs.\"idCS\" 
 			join \"mallaECS\" as mecs on mecs.\"idECS\"=ecs.id and mecs.estado is true 
 			join malla as m on m.id=mecs.\"idMalla\" 
-		where p.id='$periodo' and cs.\"idCarrera\"='$carrera' and cs.\"idSede\"='$sede' 
+		where p.id='$periodo' and cs.\"idCarrera\"='$carrera' and cs.\"idSede\"='$sede' and sec.\"idMECS\"='$mecs' 
 	";
 	$exe=pg_query($sigpa, $sql);
 
