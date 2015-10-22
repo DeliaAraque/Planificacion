@@ -14,6 +14,7 @@
 			<table class="table table-striped table-bordered table-hover dataTable">
 				<thead>
 					<tr>
+						<th></th>
 						<th>Nombre</th>
 						<th>Código</th>
 						<th>Carrera</th>
@@ -39,6 +40,18 @@
 ?>
 
 					<tr>
+						<td>
+
+<?php
+		$sql = "select count(id) as n from \"ucMalla\" where \"idUC\"='$uc->id'";
+		$exe2 = pg_query($sigpa, $sql);
+		$nUCM = pg_fetch_object($exe2);
+
+		if(! $nUCM->n)
+			echo "<i class=\"fa fa-exclamation-triangle alerta\" title=\"Esta unidad curricular no es usada por ninguna malla\"></i>";
+?>
+
+						</td>
 						<td><?php echo $uc->nombre; if($uc->renombrable == "t") echo " <i class=\"fa fa-pencil-square-o\" title=\"Renombrable\"></i>"; ?></td>
 						<td><?= $uc->id; ?></td>
 						<td><?= $uc->carrera; ?></td>
@@ -62,7 +75,7 @@
 
 				<tfoot>
 					<tr>
-						<td class="text-center" title="Nueva unidad curricular" onClick="embem('moduloPlanificacion/UC/form.php', '#page-wrapper')" style="cursor: pointer" colspan="4"><i class="fa fa-plus fa-fw agregar"></i></td>
+						<td class="text-center" title="Nueva unidad curricular" onClick="embem('moduloPlanificacion/UC/form.php', '#page-wrapper')" style="cursor: pointer" colspan="5"><i class="fa fa-plus fa-fw agregar"></i></td>
 					</tr>
 				</tfoot>
 			</table>
