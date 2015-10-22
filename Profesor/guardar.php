@@ -181,10 +181,20 @@
 
 	pg_query($sigpa, "begin");
 
-	$sql = "insert into persona values('$cedula', '$nombre', $segundoNombre, '$apellido', $segundoApellido, '$sexo', '$correo', '$direccion', '$telefono', $telefonoFijo)";
+	$sql = "select COUNT(cedula) as n from persona where cedula='$cedula'";
+	$exe = pg_query($sigpa, $sql);
+	$n = pg_fetch_object($exe);
+	$n = $n->n;
+
+	if(! $n)
+		$sql = "insert into persona values('$cedula', '$nombre', $segundoNombre, '$apellido', $segundoApellido, '$sexo', '$correo', '$direccion', '$telefono', $telefonoFijo)";
+
+	else
+		$sql = "update persona set nombre='$nombre', \"segundoNombre\"=$segundoNombre, apellido='$apellido', \"segundoApellido\"=$segundoApellido, sexo='$sexo', correo='$correo', direccion='$direccion', telefono='$telefono', \"telefonoFijo\"=$telefonoFijo where cedula='$cedula'";
+
 	$exe = pg_query($sigpa, $sql);
 
-// Si se guardo la persona correctamente
+// Si se guardo la persona correctamente o ya existe
 
 	if($exe) {
 

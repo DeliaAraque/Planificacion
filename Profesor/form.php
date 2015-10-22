@@ -13,8 +13,9 @@
 	<div class="col-lg-12">
 		<form name="profesor" method="POST" action="moduloPlanificacion/Profesor/guardar.php" data-exe="embem('moduloPlanificacion/Profesor/index.php', '#page-wrapper')" role="form">
 			<div class="form-group">
-				<input type="text" name="cedula" placeholder="Cédula" class="form-control" maxlength="8" pattern="[0-9]{7,}" onKeyUp="Verif(this)" required="required" title="Ingresela cédula del profesor" />
+				<input type="text" name="cedula" placeholder="Cédula" class="form-control" maxlength="8" pattern="[0-9]{7,}" onKeyUp="Verif(this); obtenerDatos(this.value);" required="required" title="Ingresela cédula del profesor" />
 				<p class="help-block">Solo están permitidos caracteres numéricos y debe contener al menos 7. Ej: 12345678.</p>
+				<a href="" style="display: none;"></a>
 			</div>
 
 			<div class="form-group">
@@ -177,3 +178,52 @@
 		</form>
 	</div>
 </div>
+
+<script>
+	function obtenerDatos(cedula) {
+		var formulario = document.profesor;
+		var enlace = formulario.cedula.parentNode.querySelector("a");
+
+		enlace.style.display = "none";
+
+		$.ajax( {
+			url: "moduloPlanificacion/Profesor/obtenerDatos.php",
+			data: "cedula=" + cedula,
+			type: "POST",
+			success: function (respuesta) {
+				if(respuesta) {
+					var datos = JSON.parse(respuesta);
+
+					if(datos.cedula) {
+						enlace.innerHTML = "Pertenece a " + datos.apellido + " " + datos.nombre + ", haga click aquí para modificar los datos de este profesor.";
+						enlace.style.display = "inline";
+						enlace.href = "javascript: embem('moduloPlanificacion/Profesor/editar.php', '#page-wrapper', 'cedula=" + datos.cedula + "')";
+					}
+
+					else if(confirm("Se encontraron datos de una persona registrada con esta cédula, desea cargarlos?")) {
+						formulario.nombre.value = datos.nombre;
+
+						if(datos.segundoNombre)
+							formulario.segundoNombre.value = datos.segundoNombre;
+
+						formulario.apellido.value = datos.apellido;
+
+						if(datos.segundoApellido)
+							formulario.segundoApellido.value = datos.segundoApellido;
+
+						if(datos.sexo == "f")
+							document.querySelector("input[name='sexo'][value='f']").checked = "checked";
+
+						else if(datos.sexo == "m")
+							document.querySelector("input[name='sexo'][value='m']").checked = "checked";
+
+						formulario.correo.value = datos.correo;
+						formulario.direccion.innerHTML = datos.direccion;
+						formulario.telefono.value = datos.telefono;
+						formulario.telefonoFijo.value = datos.telefonoFijo;
+					}
+				}
+			}
+		});
+	}
+</script>
