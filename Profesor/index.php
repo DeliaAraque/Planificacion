@@ -11,7 +11,7 @@
 <div class="row">
 	<div class="col-lg-12">
 		<div class="dataTable_wrapper">
-			<table class="table table-striped table-bordered table-hover dataTable">
+			<table class="table table-striped table-bordered table-hover dataTable" id="ProfesorDT">
 				<thead>
 					<tr>
 						<th></th>
@@ -22,58 +22,6 @@
 					</tr>
 				</thead>
 
-				<tbody>
-
-<?php
-	require "../../lib/conexion.php";
-
-	$sql = "
-		select p.cedula as cedula, p.nombre as nombre, p.apellido as apellido, p.telefono as telefono, p.correo as correo, p.direccion as direccion, prof.categoria as categoria, prof.condicion as condicion, prof.dedicacion as dedicacion, prof.profesion as profesion 
-		from persona as p 
-			join profesor as prof on prof.cedula=p.cedula 
-		order by p.cedula, p.apellido, p.nombre
-	";
-	$exe = pg_query($sigpa, $sql);
-
-	while($profesor = pg_fetch_object($exe)) {
-?>
-
-					<tr>
-						<td>
-
-<?php
-		$sql = "select count(\"idProfesor\") as n from pertenece where \"idProfesor\"='$profesor->cedula'";
-		$exe2 = pg_query($sigpa, $sql);
-		$n = pg_fetch_object($exe2);
-		$n = $n->n;
-
-		if(($profesor->correo == "Sin asignar") || ($profesor->direccion == "Sin asignar") || ($profesor->telefono == "Sin asignar") || ($profesor->categoria == "No") || ($profesor->condicion == "0") || ($profesor->dedicacion == "No") || ($profesor->profesion == "0") || ($n == "0"))
-			echo "<i class=\"fa fa-exclamation-triangle alerta\" onClick=\"embem('moduloPlanificacion/Profesor/editar.php', '#page-wrapper', 'cedula=$profesor->cedula')\" title=\"Este profesor necesita ser completado\"></i>";
-?>
-
-						</td>
-						<td><?= "$profesor->apellido $profesor->nombre"; ?></td>
-						<td><?= $profesor->cedula; ?></td>
-						<td><?= $profesor->telefono; ?></td>
-						<td><div class="row">
-							<div class="col-xs-7 col-sm-7 col-md-6 col-lg-7">
-								<?= $profesor->correo; ?>
-							</div>
-
-							<div class="col-xs-5 col-sm-5 col-md-6 col-lg-5 text-center">
-								<i class="fa fa-search fa-fw consultar" title="Mas información" onClick="moreInfo('moduloPlanificacion/Profesor/consultar.php', 'cedula=<?= $profesor->cedula ?>')"></i>
-								<i class="fa fa-pencil fa-fw editar" title="Editar" onClick="embem('moduloPlanificacion/Profesor/editar.php', '#page-wrapper', 'cedula=<?= $profesor->cedula ?>')"></i>
-								<i class="fa fa-trash-o fa-fw eliminar" onClick="if(confirm('¿Realmente desea eliminar a <?= "$profesor->apellido $profesor->nombre ($profesor->cedula)"; ?>?')) sendReq('../../script/eliminar.php', 'tabla=persona&campo=cedula&valor=<?= $profesor->cedula ?>', 'moduloPlanificacion/Profesor/index.php')" title="Eliminar"></i>
-							</div>
-						</div></td>
-					</tr>
-
-<?php
-	}
-?>
-
-				</tbody>
-
 				<tfoot>
 					<tr>
 						<td class="text-center" title="Nuevo profesor" onClick="embem('moduloPlanificacion/Profesor/form.php', '#page-wrapper')" style="cursor: pointer" colspan="5"><i class="fa fa-plus fa-fw editar"></i></td>
@@ -83,3 +31,37 @@
 		</div>
 	</div>
 </div>
+
+<script>
+	$("#ProfesorDT").dataTable( {
+		"responsive": true,
+		"aLengthMenu": [[15, 30, -1], [15, 30, "Todos"]],
+		"language":  {
+			"sProcessing":     "Procesando...",
+			"sLengthMenu":     "_MENU_ elementos por página",
+			"sZeroRecords":    "No hay elementos",
+			"sEmptyTable":     "No hay elementos",
+			"sInfo":           "Total: _MAX_ elementos (_START_-_END_)",
+			"sInfoEmpty":      "No hay elementos",
+			"sInfoFiltered":   "(se encontraron _TOTAL_ coincidencias)",
+			"sInfoPostFix":    "",
+			"sSearch":         "Buscar:",
+			"sUrl":            "",
+			"sInfoThousands":  ",",
+			"sLoadingRecords": "Cargando...",
+			"oPaginate": {
+				"sFirst":    "<i class=\"fa fa-angle-double-left fa-fw\" title=\"Primera página\"></i>",
+				"sLast":     "<i class=\"fa fa-angle-double-right fa-fw\" title=\"Última página\"></i>",
+				"sPrevious": "<i class=\"fa fa-angle-left fa-fw\" title=\"Anterior\"></i>",
+				"sNext":     "<i class=\"fa fa-angle-right fa-fw\" title=\"Siguiente\"></i>"
+			},
+			"oAria": {
+				"sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
+				"sSortDescending": ": Activar para ordenar la columna de manera descendente"
+			}
+		},
+		"retrieve": true,
+		"ajax": "moduloPlanificacion/Profesor/dataTable.php",
+		"deferRender": true
+	});
+</script>
