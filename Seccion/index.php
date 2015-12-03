@@ -5,6 +5,7 @@
 <div class="row">
 	<div class="col-lg-12">
 		<h1 class="page-header">Secciones</h1>
+		<small class="help-block">Para ver secciones sin carga asignada haga click <a href="javascript: embem('moduloPlanificacion/Seccion/sincarga.php', '#page-wrapper')">aquí</a>.</small>
 		<small class="help-block">Para ver secciones de periodos antiguos haga click <a href="javascript: embem('moduloPlanificacion/Seccion/antigua.php', '#page-wrapper')">aquí</a>.</small>
 	</div>
 </div>
@@ -16,8 +17,8 @@
 				<thead>
 					<tr>
 						<th>Periodo</th>
-						<th>Sección</th>
 						<th>Carrera</th>
+						<th>Sección</th>
 					</tr>
 				</thead>
 
@@ -34,7 +35,7 @@
 			join \"carreraSede\" as cs on cs.id=ecs.\"idCS\" 
 			join carrera as c on c.id=cs.\"idCarrera\" 
 			join sede as s on s.id=cs.\"idSede\"
-		order by p.id, sec.id, c.nombre, s.nombre, sec.\"periodoEstructura\"
+		order by p.id, c.nombre, s.nombre, sec.\"periodoEstructura\", sec.id
 	";
 	$exe = pg_query($sigpa, $sql);
 
@@ -43,7 +44,9 @@
 
 					<tr>
 						<td><?= $seccion->periodo; ?></td>
-						<td>
+						<td><?= "$seccion->carrera - $seccion->sede ($seccion->periodoEstructura)"; ?></td>
+						<td><div class="row">
+							<div class="col-xs-7 col-sm-7 col-md-6 col-lg-7">
 
 <?php
 		echo $seccion->id;
@@ -55,10 +58,6 @@
 			echo " <i class=\"fa fa-fw fa-moon-o\" title=\"Nocturna\"></i>";
 ?>
 
-						</td>
-						<td><div class="row">
-							<div class="col-xs-7 col-sm-7 col-md-6 col-lg-7">
-								<?= "$seccion->carrera - $seccion->sede ($seccion->periodoEstructura)"; ?>
 							</div>
 
 							<div class="col-xs-5 col-sm-5 col-md-6 col-lg-5 text-center">

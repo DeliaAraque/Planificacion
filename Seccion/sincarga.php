@@ -4,7 +4,7 @@
 
 <div class="row">
 	<div class="col-lg-12">
-		<h1 class="page-header">Secciones antiguas</h1>
+		<h1 class="page-header">Secciones sin carga asignada</h1>
 	</div>
 </div>
 
@@ -26,9 +26,9 @@
 	require "../../lib/conexion.php";
 
 	$sql = "
-		select sec.\"ID\" as \"ID\", p.id as periodo, sec.id as id, sec.turno as turno, sec.grupos as grupos, c.nombre as carrera, s.nombre as sede, sec.\"periodoEstructura\" as \"periodoEstructura\" 
+		select sec.\"ID\" as \"ID\", p.id as periodo, sec.id as id, sec.turno as turno, sec.grupos as grupos, c.id as \"idCarrera\", c.nombre as carrera, s.nombre as sede, sec.\"periodoEstructura\" as \"periodoEstructura\", sec.\"idMECS\" as \"idMECS\" 
 		from seccion as sec 
-			join periodo as p on p.\"ID\"=sec.\"idPeriodo\" and p.\"fechaFin\"<current_date 
+			join periodo as p on p.\"ID\"=sec.\"idPeriodo\" and p.\"fechaFin\">=current_date 
 			join \"estructuraCS\" as ecs on ecs.id=p.\"idECS\" 
 			join \"carreraSede\" as cs on cs.id=ecs.\"idCS\" 
 			join carrera as c on c.id=cs.\"idCarrera\" 
@@ -38,6 +38,23 @@
 	$exe = pg_query($sigpa, $sql);
 
 	while($seccion = pg_fetch_object($exe)) {
+		$sql = "
+			select count(uc.id) as n 
+			from \"mallaECS\" as mecs 
+				join malla as m on m.id=mecs.\"idMalla\" 
+				join \"ucMalla\" as ucm on ucm.\"idMalla\"=m.id 
+				join \"unidadCurricular\" as uc on uc.id=ucm.\"idUC\" 
+			where mecs.id='$seccion->idMECS' and ucm.periodo='$seccion->periodoEstructura' and uc.\"idCarrera\"='$seccion->idCarrera' 
+		";
+		$exe2 = pg_query($sigpa, $sql);
+		$uc = pg_fetch_object($exe2);
+
+		$sql = "select count(id) as n from carga where \"idSeccion\"='$seccion->ID'";
+		$exe2 = pg_query($sigpa, $sql);
+		$carga = pg_fetch_object($exe2);
+
+		if($carga->n == $uc->n)
+			continue;
 ?>
 
 					<tr>
