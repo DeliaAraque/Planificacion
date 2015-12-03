@@ -41,7 +41,8 @@
 		select count(s.id) as n 
 		from seccion as s 
 			join periodo as p on p.\"ID\"=s.\"idPeriodo\"
-		where p.id='$periodo' and s.\"periodoEstructura\"='$periodoEstructura'";
+		where s.\"idPeriodo\"=(select \"ID\" from periodo where id='$periodo' and tipo='a' and \"idECS\"=(select \"idECS\" from \"mallaECS\" where id='$mecs')) and s.\"periodoEstructura\"='$periodoEstructura' and s.\"idMECS\"='$mecs' 
+	";
 	$exe = pg_query($sigpa, $sql);
 	$n = pg_fetch_object($exe);
 
@@ -134,7 +135,7 @@
 			}
 
 			else
-				echo "No se ha asignado un profesor a esta sección";
+				echo "<b style=\"color: red;\">No se ha asignado un profesor a esta sección</b>";
 ?>
 
 		</td>
