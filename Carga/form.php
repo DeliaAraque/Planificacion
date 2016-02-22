@@ -95,6 +95,8 @@
 		$exe2 = pg_query($sigpa, $sql);
 		$p = pg_fetch_object($exe2);
 
+		/* Calculo de horas
+
 		$sql = "
 			select ucm.\"horasTeoricas\" as ht, ucm.\"horasPracticas\" as hp, c.\"dividirHT\" as \"dividirHT\", s.multiplicador as multiplicador, s.grupos as grupos 
 			from carga as c 
@@ -127,6 +129,9 @@
 		}
 
 		$options .= "<option value=\"$profesor->cedula\">$profesor->apellido $profesor->nombre ($profesor->cedula) - Horas disponibles: " . ($p->dedicacion - $total) . "</option>";
+		*/
+
+		$options .= "<option value=\"$profesor->cedula\">$profesor->apellido $profesor->nombre ($profesor->cedula)</option>";
 	}
 
 	$sql = "
@@ -265,10 +270,10 @@
 			hp *= 2;
 
 			if(! document.querySelector("#dividirHT" + seccion.value).checked)
-				id = seccion.value + " (" + seccion.value + "1 - " + seccion.value + "2)";
+				id = seccion.value + "(" + seccion.value + "1-" + seccion.value + "2)";
 
 			else {
-				id = seccion.value + "1 - " + seccion.value + "2";
+				id = seccion.value + "1-" + seccion.value + "2";
 				ht *= 2;
 			}
 		}

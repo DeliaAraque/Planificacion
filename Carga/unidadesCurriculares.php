@@ -52,7 +52,7 @@
 	$fechaFin = $fechaFin->fechaFin;
 
 	$sql = "
-		select uc.id as id, uc.nombre nombre 
+		select uc.id as id, uc.nombre nombre, ucm.tipo as tipo 
 		from \"mallaECS\" as mecs 
 			join malla as m on m.id=mecs.\"idMalla\" 
 			join \"ucMalla\" as ucm on ucm.\"idMalla\"=m.id 
@@ -72,7 +72,14 @@
 
 	<tr>
 		<th class="text-center" style="color: white; background-color: #00005b;" colspan="2">
-			<?= "$uc->nombre ($uc->id)"; ?>
+
+<?php
+	echo "$uc->nombre ($uc->id)";
+
+	if($uc->tipo == "t")
+		echo " <i class=\"fa fa-fw fa-flask\" title=\"Laboratorio\"></i>";
+?>
+
 		</th>
 	</tr>
 

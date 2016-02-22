@@ -21,7 +21,7 @@
 	$profesor = pg_fetch_object($exe);
 
 	$sql = "
-		select ucm.\"horasTeoricas\" as ht, ucm.\"horasPracticas\" as hp, c.\"dividirHT\" as \"dividirHT\", s.multiplicador as multiplicador, s.grupos as grupos 
+		select ucm.\"horasTeoricas\" as ht, ucm.\"horasPracticas\" as hp, c.\"dividirHT\" as \"dividirHT\", s.multiplicador as multiplicador, s.grupos as grupos, ucm.tipo as tipo 
 		from carga as c 
 			join seccion as s on s.\"ID\"=c.\"idSeccion\" 
 			join periodo as p on p.\"ID\"=s.\"idPeriodo\" 
@@ -41,11 +41,13 @@
 		$ht = $horas->ht * $horas->multiplicador;
 		$hp = $horas->hp * $horas->multiplicador;
 
-		if($horas->grupos == "t") {
-			$hp *= 2;
+		if($horas->tipo == "t") {
+			if($horas->grupos == "t") {
+				$hp *= 2;
 
-			if($horas->dividirHT == "t")
-				$ht *= 2;
+				if($horas->dividirHT == "t")
+					$ht *= 2;
+			}
 		}
 
 		$total += $ht + $hp;

@@ -103,32 +103,34 @@
 		exit;
 	}
 
-	$estructura = htmlspecialchars($_POST["estructura"], ENT_QUOTES);
+	$malla = htmlspecialchars($_POST["malla"], ENT_QUOTES);
 
 	$sql = "
-		select count(e.id) as n
+		select ecs.id as id, ecs.\"idEstructura\" as \"idEstructura\" 
 		from periodo as p 
 			join \"estructuraCS\" as ecs on ecs.id=p.\"idECS\" 
-			join estructura as e on e.id=ecs.\"idEstructura\" 
 			join \"carreraSede\" as cs on cs.id=ecs.\"idCS\" 
-		where p.id='$periodo' and p.tipo='a' and cs.\"idCarrera\"='$carrera' and cs.\"idSede\"='$sede' and e.id='$estructura'
-		group by e.id
+			join \"mallaECS\" as mecs on mecs.\"idECS\"=ecs.id and mecs.estado is true 
+			join malla as m on m.id=mecs.\"idMalla\" 
+		where p.id='$periodo' and p.tipo='a' and cs.\"idCarrera\"='$carrera' and cs.\"idSede\"='$sede' and mecs.id='$malla'
+		group by ecs.id, ecs.\"idEstructura\"
 	";
 	$exe = pg_query($sigpa, $sql);
 	$n = pg_fetch_object($exe);
-	$n = $n->n;
-
-	if($n < 1) {
+ 
+	if($n->id < 1) {
 		echo "Por aquí <strong>NO</strong> pasan inyecciones! :B";
 		exit;
 	}
 
+	$estructura = $n->idEstructura;
+
 	$periodoEstructura = htmlspecialchars($_POST["periodoEstructura"], ENT_QUOTES);
 
 	$sql = "
-		select sec.\"ID\" as \"ID\", p.id as periodo, sec.id as id, sec.turno as turno, sec.multiplicador as multiplicador, sec.grupos as grupos, c.id as carrera, s.id as sede, e.id as estructura, sec.\"periodoEstructura\" as \"periodoEstructura\" 
+		select sec.\"ID\" as \"ID\", p.id as periodo, sec.id as id, sec.turno as turno, sec.multiplicador as multiplicador, sec.grupos as grupos, c.id as carrera, s.id as sede, e.id as estructura, sec.\"periodoEstructura\" as \"periodoEstructura\", sec.\"idMECS\" as malla 
 		from seccion as sec 
-			join periodo as p on p.\"ID\"=sec.\"idPeriodo\" and p.\"fechaFin\">current_date 
+			join periodo as p on p.\"ID\"=sec.\"idPeriodo\" and p.\"fechaFin\">=current_date 
 			join \"estructuraCS\" as ecs on ecs.id=p.\"idECS\" 
 			join estructura as e on e.id=ecs.\"idEstructura\" 
 			join \"carreraSede\" as cs on cs.id=ecs.\"idCS\" 
@@ -139,9 +141,9 @@
 	";
 	$exe = pg_query($sigpa, $sql);
 	$seccionAnt = pg_fetch_object($exe);
-	$seccionAnt->grupos = ($grupos != "true") ? "false" : "true";
+	$seccionAnt->grupos = ($seccionAnt->grupos == "f") ? "false" : "true";
 
-	if(($id == $seccionAnt->id) && ($turno == $seccionAnt->turno) && ($multiplicador == $seccionAnt->multiplicador) && ($grupos == $seccionAnt->grupos) && ($carrera == $seccionAnt->carrera) && ($periodo == $seccionAnt->periodo) && ($sede == $seccionAnt->carrera) && ($estructura == $seccionAnt->estructura) && ($periodoEstructura == $seccionAnt->periodoEstructura)) {
+	if(($id == $seccionAnt->id) && ($turno == $seccionAnt->turno) && ($multiplicador == $seccionAnt->multiplicador) && ($grupos == $seccionAnt->grupos) && ($carrera == $seccionAnt->carrera) && ($periodo == $seccionAnt->periodo) && ($sede == $seccionAnt->sede) && ($malla == $seccionAnt->malla) && ($periodoEstructura == $seccionAnt->periodoEstructura)) {
 		echo "No se hizo ningún cambio&&info";
 		exit;
 	}

@@ -5,7 +5,11 @@
 
 <div class="row">
 	<div class="col-lg-12">
-		<h1 class="page-header">Carga académica</h1>
+		<h1 class="page-header">
+			Carga académica
+			<i id="planillaBtn" class="fa fa-file-pdf-o pull-right" title="Generar planilla" style="cursor: pointer;" onClick="planilla()"></i>
+			<i id="planillaBtn" class="fa fa-search pull-right" title="Previsualizar planilla" style="cursor: pointer;" onClick="planilla(true)"></i>
+		</h1>
 	</div>
 </div>
 
@@ -147,5 +151,26 @@
 		}
 
 		embem('moduloPlanificacion/Carga/unidadesCurriculares.php', unidadesCurriculares, "carrera=" + carrera.value + "&sede=" + sede.value + "&periodo=" + periodo.value + "&mecs=" + malla.value + "&periodoEstructura=" + periodoEstructura.value);
+	}
+
+	function planilla(previsualizar) {
+		var periodo = document.getElementById("periodoSelect");
+		var malla = document.getElementById("mallaSelect");
+
+		if(! periodo.value) {
+			popUp("Debe seleccionar un periodo académico");
+			return false;
+		}
+
+		if(! malla.value) {
+			popUp("Debe seleccionar una malla");
+			return false;
+		}
+
+		if(previsualizar)
+			window.open("moduloPlanificacion/Carga/planilla.php?mecs=" + malla.value + "&periodo=" + periodo.value + "&previsualizar=true", "_blank", "menubar=no, status=no, titlebar=no, width=" + screen.availWidth + ", height=" + screen.availHeight);
+
+		else
+			sendReq("moduloPlanificacion/Carga/generarPlanilla.php", "mecs=" + malla.value + "&periodo=" + periodo.value);
 	}
 </script>

@@ -5,9 +5,9 @@
 	$ID = htmlspecialchars($_POST["ID"], ENT_QUOTES);
 
 	$sql = "
-		select sec.\"ID\" as \"ID\", p.id as periodo, sec.id as id, sec.turno as turno, sec.multiplicador as multiplicador, sec.grupos as grupos, c.id as carrera, s.id as sede, e.id as estructura, sec.\"periodoEstructura\" as \"periodoEstructura\" 
+		select sec.\"ID\" as \"ID\", p.id as periodo, sec.id as id, sec.turno as turno, sec.multiplicador as multiplicador, sec.grupos as grupos, c.id as carrera, s.id as sede, e.id as estructura, sec.\"periodoEstructura\" as \"periodoEstructura\", sec.\"idMECS\" as malla 
 		from seccion as sec 
-			join periodo as p on p.\"ID\"=sec.\"idPeriodo\" and p.\"fechaFin\">current_date 
+			join periodo as p on p.\"ID\"=sec.\"idPeriodo\" and p.\"fechaFin\">=current_date 
 			join \"estructuraCS\" as ecs on ecs.id=p.\"idECS\" 
 			join estructura as e on e.id=ecs.\"idEstructura\" 
 			join \"carreraSede\" as cs on cs.id=ecs.\"idCS\" 
@@ -30,6 +30,7 @@
 	<div class="col-xs-12">
 		<form name="seccion" method="POST" action="moduloPlanificacion/Seccion/modificar.php" data-exe="embem('moduloPlanificacion/Seccion/index.php', '#page-wrapper')" role="form">
 			<div class="form-group">
+				Sección:
 				<input type="text" name="id" placeholder="Sección" value="<?= $seccion->id; ?>" class="form-control" pattern="^[A-Z]$" required="required" />
 				<input type="hidden" name="idAnt" value="<?= $seccion->id; ?>" />
 				<p class="help-block">Solo está permitido un caracterer alfabético en mayusculas. Ej: A.</p>
@@ -38,12 +39,13 @@
 			<div class="form-group"> 
 				Turno:
 				<div class="radio-inline">
-					<label class="radio-inline"><input type="radio" name="turno" value="d" <?php if($seccion->turno == "d") echo "checked=\"checked\""; ?> required="required"> Diurno </label>
-					<label class="radio-inline"><input type="radio" name="turno" value="n" <?php if($seccion->turno == "n") echo "checked=\"checked\""; ?> required="required"> Nocturno </label>
+					<label class="radio-inline"><input type="radio" name="turno" value="d" onClick="document.seccion.multiplicador.value='1';" <?php if($seccion->turno == "d") echo "checked=\"checked\""; ?> required="required"> Diurno </label>
+					<label class="radio-inline"><input type="radio" name="turno" value="n" onClick="document.seccion.multiplicador.value='1.5';" <?php if($seccion->turno == "n") echo "checked=\"checked\""; ?> required="required"> Nocturno </label>
 				</div>
 			</div>
 
 			<div class="form-group">
+				Multiplicador:
 				<input type="text" name="multiplicador" placeholder="Multiplicador" value="<?= $seccion->multiplicador; ?>" class="form-control" pattern="^[0-9]+(\.[0-9])*$" required="required" />
 				<p class="help-block">El multiplicador determina si las horas de las unidades curriculares deben aumentar o disminuir según el turno. Ej: 1.5.</p>
 			</div>
@@ -53,8 +55,8 @@
 			</div>
 
 			<div class="form-group">
+				Carrera:
 				<select name="carrera" class="form-control" onChange="selectSede()" required="required">
-					<option value="">Carrera</option>
 
 <?php
 	$sql="
@@ -83,8 +85,8 @@
 			</div>
 
 			<div class="form-group">
+				Sede:
 				<select name="sede" class="form-control" onChange="selectPeriodos()" required="required">
-					<option value="">Sede</option>
 
 <?php
 	$sql="
@@ -114,8 +116,8 @@
 			</div>
 
 			<div class="form-group">
-				<select name="periodo" class="form-control" onChange="selectEstructuras()" required="required">
-					<option value="">Periodo académico</option>
+				Periodo académico:
+				<select name="periodo" class="form-control" onChange="selectMallas()" required="required">
 
 <?php
 	$sql="
@@ -143,40 +145,40 @@
 				<p class="help-block">Antes de poder seleccionar algún periodo, debe elegir una sede.</p>
 			</div>
 
-
 			<div class="form-group">
-				<select name="estructura" class="form-control" onChange="selectPeriodosE()" required="required">
-					<option value="">Estructura</option>
+				Malla:
+				<select name="malla" class="form-control" onChange="selectPeriodosE()" required="required">
 
 <?php
 	$sql="
-		select e.id as id, e.nombre as nombre
+		select mecs.id as id, m.id as nombre 
 		from periodo as p 
 			join \"estructuraCS\" as ecs on ecs.id=p.\"idECS\" 
-			join estructura as e on e.id=ecs.\"idEstructura\" 
 			join \"carreraSede\" as cs on cs.id=ecs.\"idCS\" 
+			join \"mallaECS\" as mecs on mecs.\"idECS\"=ecs.id and mecs.estado is true 
+			join malla as m on m.id=mecs.\"idMalla\" 
 		where p.id='$seccion->periodo' and p.tipo='a' and cs.\"idCarrera\"='$seccion->carrera' and cs.\"idSede\"='$seccion->sede' 
-		group by e.id, e.nombre
+		group by mecs.id, m.id
 	";
 	$exe = pg_query($sigpa, $sql);
 
-	while($estructura = pg_fetch_object($exe)) {
-		echo "<option value=\"$estructura->id\"";
+	while($malla = pg_fetch_object($exe)) {
+		echo "<option value=\"$malla->id\"";
 
-		if($seccion->estructura == $estructura->id)
+		if($seccion->malla == $malla->id)
 			echo " selected=\"selected\"";
 
-		echo ">$estructura->nombre</option>";
+		echo ">$malla->nombre</option>";
 	}
 ?>
 
 				</select>
-				<p class="help-block">Antes de poder seleccionar alguna estructura, debe elegir alguna carrera.</p>
+				<p class="help-block">Antes de poder seleccionar alguna malla, debe elegir algún periodo académico.</p>
 			</div>
 
 			<div class="form-group" id="periodoEstructura">
+				Periodo:
 				<select name="periodoEstructura" class="form-control" required="required">
-					<option value="">Periodo</option>
 
 <?php
 	$sql = "select estructura from estructura where id='$seccion->estructura'";
@@ -208,7 +210,7 @@
 ?>
 
 				</select>
-				<p class="help-block">Antes de poder seleccionar algún periodo, debe elegir alguna estructura.</p>
+				<p class="help-block">Antes de poder seleccionar algún periodo, debe elegir alguna malla.</p>
 			</div>
 
 			<div class="form-group text-center">
@@ -228,7 +230,7 @@
 		if(! carrera.value) {
 			sede.innerHTML = "<option value=\"\">Sede</option>";
 			document.seccion.periodo.innerHTML = "<option value=\"\">Periodo académico</option>";
-			document.seccion.estructura.innerHTML = "<option value=\"\">Estructura</option>";
+			document.seccion.malla.innerHTML = "<option value=\"\">Malla</option>";
 			document.seccion.periodoEstructura.innerHTML = "<option value=\"\">Periodo</option>";
 			return false;
 		}
@@ -249,29 +251,29 @@
 		embem('moduloPlanificacion/Seccion/periodos.php', periodo, "carrera=" + carrera.value + "&sede=" + sede.value);
 	}
 
-	function selectEstructuras() {
+	function selectMallas() {
 		var carrera = document.seccion.carrera;
 		var sede = document.seccion.sede;
 		var periodo = document.seccion.periodo;
-		var estructura = document.seccion.estructura;
+		var malla = document.seccion.malla;
 
 		if(! periodo.value) {
-			estructura.innerHTML = "<option value=\"\">Estructura</option>";
+			malla.innerHTML = "<option value=\"\">Malla</option>";
 			return false;
 		}
 
-		embem('moduloPlanificacion/Seccion/estructuras.php', estructura, "carrera=" + carrera.value + "&sede=" + sede.value + "&periodo=" + periodo.value);
+		embem('moduloPlanificacion/Seccion/mallas.php', malla, "carrera=" + carrera.value + "&sede=" + sede.value + "&periodo=" + periodo.value);
 	}
 
 	function selectPeriodosE() {
-		var estructura = document.seccion.estructura;
+		var malla = document.seccion.malla;
 		var periodoEstructura = document.seccion.periodoEstructura;
 
-		if(! estructura.value) {
+		if(! malla.value) {
 			periodoEstructura.innerHTML = "<option value=\"\">Periodo</option>";
 			return false;
 		}
 
-		embem('moduloPlanificacion/Seccion/periodosEstructura.php', periodoEstructura, "estructura=" + estructura.value);
+		embem('moduloPlanificacion/Seccion/periodosEstructura.php', periodoEstructura, "mecs=" + malla.value);
 	}
 </script>
