@@ -27,7 +27,15 @@
 	$periodo->fechaFin = $periodo->fechaFin[2] . "/" . $periodo->fechaFin[1] . "/" . $periodo->fechaFin[0];
 ?>
 
+<meta charset="utf-8">
+
 <style>
+	h1,
+	h2 {
+		text-align: center;
+		text-transform: uppercase;
+	}
+
 	h4 {
 		padding-top: 1em;
 		text-align: center;
@@ -53,6 +61,22 @@
 	}
 </style>
 
+<?php
+	if(! $previsualizar) {
+?>
+
+<br/><br/><br/><br/><br/>
+<h1>Planificación Académica</h1>
+<h1><?= $periodo->carrera; ?></h1>
+<h2><?= $periodo->sede; ?></h2>
+<h2><?= $periodo->id; ?></h2>
+
+<div style="page-break-after: always;"></div>
+
+<?php
+	}
+?>
+
 <?= profesor(3); ?>
 <?= profesor(3, "Aux"); ?>
 <?= profesor(1); ?>
@@ -61,16 +85,20 @@
 	function profesor($condicion, $categoria) {
 		global $sigpa, $periodo, $mecs, $previsualizar, $limite;
 
+		$totalProfesores = 0;
+
 		$sql = "
-			select count(car.id) as n 
+			select car.\"idProfesor\" as profesor 
 			from carga as car 
 				join profesor as prof on prof.cedula=car.\"idProfesor\" or prof.cedula=car.\"idSuplente\" 
 				join seccion as sec on sec.\"ID\"=car.\"idSeccion\" 
 			where prof.condicion='$condicion'" . (($categoria) ? " and prof.categoria like '$categoria%' " : "") . " and sec.\"idPeriodo\"='$periodo->ID' and sec.\"idMECS\"='$mecs' 
+			group by car.\"idProfesor\"
 		";
 		$exe = pg_query($sigpa, $sql);
-		$n = pg_fetch_object($exe);
-		$totalProfesores = $n->n;
+
+		while($profesor = pg_fetch_object($exe))
+			++$totalProfesores;
 
 		if(! $totalProfesores)
 			return false;
@@ -208,7 +236,7 @@
 			}
 
 			if(! $previsualizar) {
-				if(($nProfesores % $limite == 0) && ($totalProfesores > $limite)) {
+				if(($nProfesores % $limite == 0) && ($nProfesores < $totalProfesores)) {
 ?>
 
 </table>

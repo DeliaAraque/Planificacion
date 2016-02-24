@@ -35,7 +35,7 @@
 
 	$nombre = str_replace(" ", "\\ ", "$header->periodo $header->carrera $header->sede $malla->id");
 
-	exec("wkhtmltopdf -O Landscape -T 30mm -B 40mm --header-spacing 10 --header-html \"http://localhost/moduloPlanificacion/Carga/header.php?carrera=$header->carrera&sede=$header->sede&malla=$malla->id&periodo=$header->periodo&fechaInicio=$header->fechaInicio&fechaFin=$header->fechaFin\" --footer-html \"http://localhost/moduloPlanificacion/Carga/footer.php\" \"http://localhost/moduloPlanificacion/Carga/planilla.php?mecs=$mecs&periodo=$periodo\" /var/www/html/moduloPlanificacion/Carga/Planillas/$nombre.pdf");
+	exec("wkhtmltopdf -O Landscape -T 30mm -B 40mm --header-spacing 10 --header-html \"http://localhost/moduloPlanificacion/Carga/header.php?carrera=$header->carrera&sede=$header->sede&malla=$malla->id&periodo=$header->periodo&fechaInicio=$header->fechaInicio&fechaFin=$header->fechaFin\" --footer-html \"http://localhost/moduloPlanificacion/Carga/footer.php?carrera=$header->carrera&sede=$header->sede\" \"http://localhost/moduloPlanificacion/Carga/planilla.php?mecs=$mecs&periodo=$periodo\" /var/www/html/moduloPlanificacion/Carga/Planillas/$nombre.pdf");
 	echo "Compruebe que se haya generado la planilla en la sección <strong><a href=\"javascript: embem('moduloPlanificacion/Carga/planillas.php', '#page-wrapper')\">Planillas</a></strong>&&success";
 
 	$nombre = str_replace("\\", "", $nombre);
