@@ -72,6 +72,12 @@
 				</select>
 			</div>
 
+			<div class="form-group"> 
+				<label class="checkbox-inline">
+					<input type="checkbox" name="ls" value="1" onChange="licenciaSabatica()"> Suplencia por licencia sabática
+				</label>
+			</div>
+
 <?php
 	$options = "";
 
@@ -197,7 +203,7 @@
 					<select name="suplente<?= $seccion->id; ?>" id="suplente<?= $seccion->id; ?>" class="form-control" disabled="disabled">
 						<option value="">Suplente</option>
 
-						<?= $options ?>
+						<?= $options; ?>
 
 					</select>
 				</div></div>
@@ -206,6 +212,43 @@
 <?php
 	}
 ?>
+
+			<div id="optionsContratados" style="display: none">
+				<option value="">Suplente</option>
+				<?= $options; ?>
+			</div>
+
+<?php
+	$options = "";
+
+	$sql = "
+		select p.cedula as cedula, p.nombre as nombre, p.apellido as apellido 
+		from persona as p 
+			join profesor as prof on prof.cedula=p.cedula 
+			join pertenece as per on per.\"idProfesor\"=prof.cedula
+		where prof.condicion='3' and per.\"idCS\"=(select id from \"carreraSede\" where \"idCarrera\"='$carrera' and \"idSede\"='$sede') 
+		order by p.apellido, p.nombre, p.cedula
+	";
+	$exe = pg_query($sigpa, $sql);
+
+	while($profesor = pg_fetch_object($exe)) {
+		$sql = "
+			select p.cedula as cedula, d.horas as dedicacion, p.condicion as condicion 
+			from profesor as p 
+				join dedicacion as d on d.id=p.dedicacion
+			where p.cedula='$profesor->cedula'
+		";
+		$exe2 = pg_query($sigpa, $sql);
+		$p = pg_fetch_object($exe2);
+
+		$options .= "<option value=\"$profesor->cedula\">$profesor->apellido $profesor->nombre ($profesor->cedula)</option>";
+	}
+?>
+
+			<div id="optionsOrdinarios" style="display: none">
+				<option value="">Suplente</option>
+				<?= $options; ?>
+			</div>
 
 			<div class="form-group text-center"> 
 				Horas disponibles: <code style="font-size: 1.5em;" id="horasDisponibles">0</code>
@@ -227,6 +270,16 @@
 	function profesores() {
 		var condicion = document.carga.condicion.value;
 		var profesor = document.carga.profesor;
+		var ls = document.carga.ls;
+
+		if(condicion == 1) {
+			ls.parentNode.parentNode.style.display = "none";
+			ls.checked = false;
+			licenciaSabatica();
+		}
+
+		else if(condicion == 3)
+			ls.parentNode.parentNode.style.display = "block";
 
 		$("#horasDisponibles").text(0);
 		embem('moduloPlanificacion/Carga/profesores.php', profesor, "carrera=<?= $carrera; ?>&sede=<?= $sede; ?>&condicion=" + condicion);
@@ -315,5 +368,17 @@
 		}
 
 		embem('moduloPlanificacion/Carga/horasDisponibles.php', horas, "profesor=" + profesor + "&periodo=<?= $periodo ?>");
+	}
+
+	function licenciaSabatica() {
+		var ls = document.carga.ls;
+
+		if(ls.checked)
+			var options = $("#optionsOrdinarios").html();
+
+		else
+			var options = $("#optionsContratados").html();
+
+		$("select[name^=suplente]").html(options);
 	}
 </script>
