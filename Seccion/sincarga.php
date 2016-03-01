@@ -38,18 +38,35 @@
 	$exe = pg_query($sigpa, $sql);
 
 	while($seccion = pg_fetch_object($exe)) {
+		if($seccion->id == "R")
+			continue;
+
+		$sql = "
+			select m.id as id
+			from \"mallaECS\" as mecs 
+				join malla as m on m.id = mecs.\"idMalla\"
+			where mecs.id='$seccion->idMECS'
+		";
+		$exe2 = pg_query($sigpa, $sql);
+		$malla = pg_fetch_object($exe2);
+
 		$sql = "
 			select count(uc.id) as n 
 			from \"mallaECS\" as mecs 
 				join malla as m on m.id=mecs.\"idMalla\" 
 				join \"ucMalla\" as ucm on ucm.\"idMalla\"=m.id 
-				join \"unidadCurricular\" as uc on uc.id=ucm.\"idUC\" 
+				join \"unidadCurricular\" as uc on uc.id=ucm.\"idUC\" and uc.nombre not like 'Acreditable%' 
 			where mecs.id='$seccion->idMECS' and ucm.periodo='$seccion->periodoEstructura' and uc.\"idCarrera\"='$seccion->idCarrera' 
 		";
 		$exe2 = pg_query($sigpa, $sql);
 		$uc = pg_fetch_object($exe2);
 
-		$sql = "select count(id) as n from carga where \"idSeccion\"='$seccion->ID'";
+		$sql = "
+			select count(car.id) as n 
+			from carga as car
+				join \"unidadCurricular\" as uc on uc.id=car.\"idUC\" and uc.nombre not like 'Acreditable%'
+			where car.\"idSeccion\"='$seccion->ID'
+		";
 		$exe2 = pg_query($sigpa, $sql);
 		$carga = pg_fetch_object($exe2);
 
@@ -59,7 +76,7 @@
 
 					<tr>
 						<td><?= $seccion->periodo; ?></td>
-						<td><?= "$seccion->carrera - $seccion->sede ($seccion->periodoEstructura)"; ?></td>
+						<td><?= "$seccion->carrera - $seccion->sede ($malla->id $seccion->periodoEstructura)"; ?></td>
 						<td>
 
 <?php

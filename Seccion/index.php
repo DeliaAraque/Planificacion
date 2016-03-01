@@ -28,7 +28,7 @@
 	require "../../lib/conexion.php";
 
 	$sql = "
-		select sec.\"ID\" as \"ID\", p.id as periodo, sec.id as id, sec.turno as turno, sec.grupos as grupos, c.nombre as carrera, s.nombre as sede, sec.\"periodoEstructura\" as \"periodoEstructura\" 
+		select sec.\"ID\" as \"ID\", p.id as periodo, sec.id as id, sec.turno as turno, sec.grupos as grupos, c.nombre as carrera, s.nombre as sede, sec.\"periodoEstructura\" as \"periodoEstructura\", sec.\"idMECS\" as \"idMECS\" 
 		from seccion as sec 
 			join periodo as p on p.\"ID\"=sec.\"idPeriodo\" and p.\"fechaFin\">=current_date 
 			join \"estructuraCS\" as ecs on ecs.id=p.\"idECS\" 
@@ -40,11 +40,19 @@
 	$exe = pg_query($sigpa, $sql);
 
 	while($seccion = pg_fetch_object($exe)) {
+		$sql = "
+			select m.id as id
+			from \"mallaECS\" as mecs 
+				join malla as m on m.id = mecs.\"idMalla\"
+			where mecs.id='$seccion->idMECS'
+		";
+		$exe2 = pg_query($sigpa, $sql);
+		$malla = pg_fetch_object($exe2);
 ?>
 
 					<tr>
 						<td><?= $seccion->periodo; ?></td>
-						<td><?= "$seccion->carrera - $seccion->sede ($seccion->periodoEstructura)"; ?></td>
+						<td><?= "$seccion->carrera - $seccion->sede ($malla->id $seccion->periodoEstructura)"; ?></td>
 						<td><div class="row">
 							<div class="col-xs-7 col-sm-7 col-md-6 col-lg-7">
 

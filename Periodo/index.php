@@ -101,7 +101,7 @@
 			join \"carreraSede\" as cs on cs.id=ecs.\"idCS\" 
 			join carrera as c on c.id=cs.\"idCarrera\" 
 			join sede as s on s.id=cs.\"idSede\" 
-		where p.tipo='a' and p.\"fechaFin\">current_date 
+		where p.tipo='a' and p.\"fechaFin\">=current_date 
 		order by p.\"fechaInicio\" desc, p.\"fechaFin\" desc, p.id, c.nombre, s.nombre, e.nombre
 	";
 	$exe = pg_query($sigpa, $sql);

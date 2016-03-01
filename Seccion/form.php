@@ -12,8 +12,8 @@
 	<div class="col-xs-12">
 		<form name="seccion" method="POST" action="moduloPlanificacion/Seccion/guardar.php" data-exe="embem('moduloPlanificacion/Seccion/index.php', '#page-wrapper')" role="form">
 			<div class="form-group">
-				<input type="text" name="id" placeholder="Sección" class="form-control" pattern="^[A-Z]$" required="required" />
-				<p class="help-block">Solo está permitido un caracterer alfabético en mayusculas. Ej: A.</p>
+				<input type="text" name="id" placeholder="Sección" class="form-control" pattern="^[A-Z](,[A-Z])*$" required="required" />
+				<p class="help-block">Solo está permitido un caracterer alfabético en mayusculas por sección, puede crear multiples secciones con las mismas características separando sus identificadores por comas. Ej: A,C.</p>
 			</div>
 
 			<div class="form-group"> 

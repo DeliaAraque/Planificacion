@@ -88,22 +88,24 @@
 			exit;
 		}
 
-		if($_POST["suplente$seccion"]) {
-			$suplente = htmlspecialchars($_POST["suplente$seccion"], ENT_QUOTES);
+		if($_POST["ls"]) {
+			if($_POST["suplente$seccion"]) {
+				$suplente = htmlspecialchars($_POST["suplente$seccion"], ENT_QUOTES);
 
-			$sql = "
-				select count(p.cedula) as n 
-				from persona as p 
-					join profesor as prof on prof.cedula=p.cedula 
-					join pertenece as per on per.\"idProfesor\"=prof.cedula 
-				where prof.condicion='1' and per.\"idCS\"=(select id from \"carreraSede\" where \"idCarrera\"='$carrera' and \"idSede\"='$sede') and prof.cedula='$suplente'
-			";
-			$exe = pg_query($sigpa, $sql);
-			$n = pg_fetch_object($exe);
+				$sql = "
+					select count(p.cedula) as n 
+					from persona as p 
+						join profesor as prof on prof.cedula=p.cedula 
+						join pertenece as per on per.\"idProfesor\"=prof.cedula 
+					where prof.condicion='1' and per.\"idCS\"=(select id from \"carreraSede\" where \"idCarrera\"='$carrera' and \"idSede\"='$sede') and prof.cedula='$suplente'
+				";
+				$exe = pg_query($sigpa, $sql);
+				$n = pg_fetch_object($exe);
 
-			if(! $n->n) {
-				echo "Por aquí <strong>NO</strong> pasan inyecciones! :B";
-				exit;
+				if(! $n->n) {
+					echo "Por aquí <strong>NO</strong> pasan inyecciones! :B";
+					exit;
+				}
 			}
 		}
 	}
