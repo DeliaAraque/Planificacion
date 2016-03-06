@@ -5,22 +5,22 @@
 <div class="row">
 	<div class="col-lg-12">
 		<h1 class="page-header">Periodos</h1>
-		<small class="help-block">Para ver periodos antiguos haga click <a href="javascript: embem('moduloPlanificacion/Periodo/antiguo.php', '#page-wrapper')">aquí</a>.</small>
+		<!-- <small class="help-block">Para ver periodos antiguos haga click <a href="javascript: embem('moduloPlanificacion/Periodo/antiguo.php', '#page-wrapper')">aquí</a>.</small> -->
 	</div>
 </div>
 
 <div class="row">
 	<div class="col-lg-12">
-		<h4>Planificación:</h4>
+		<h4>Planificación:</h4><br/>
 
 		<div class="dataTable_wrapper">
 			<table class="table table-striped table-bordered table-hover dataTable">
 				<thead>
 					<tr>
+						<th>Carrera</th>
+						<th>ID</th>
 						<th>Fecha de inicio</th>
 						<th>Fecha de fin</th>
-						<th>ID</th>
-						<th>Carrera</th>
 					</tr>
 				</thead>
 
@@ -30,15 +30,15 @@
 	require "../../lib/conexion.php";
 
 	$sql = "
-		select p.id as id, p.\"fechaInicio\" as \"fechaInicio\", p.\"fechaFin\" as \"fechaFin\", p.\"idECS\" \"idECS\", c.nombre as carrera, s.nombre as sede, e.nombre as estructura 
+		select p.id as id, p.\"fechaInicio\" as \"fechaInicio\", p.\"fechaFin\" as \"fechaFin\", p.\"idECS\" \"idECS\", c.nombre as carrera, s.nombre as sede, e.nombre as estructura, p.\"fechaFin\" >= current_date as estado 
 		from periodo as p 
 			join \"estructuraCS\" as ecs on ecs.id=p.\"idECS\" 
 			join estructura as e on e.id=ecs.\"idEstructura\" 
 			join \"carreraSede\" as cs on cs.id=ecs.\"idCS\" 
 			join carrera as c on c.id=cs.\"idCarrera\" 
 			join sede as s on s.id=cs.\"idSede\" 
-		where p.tipo='p' and p.\"fechaFin\">=current_date 
-		order by p.\"fechaInicio\" desc, p.\"fechaFin\" desc, p.id, c.nombre, s.nombre, e.nombre
+		where p.tipo='p'
+		order by c.nombre, s.nombre, e.nombre, p.id, p.\"fechaInicio\" desc, p.\"fechaFin\" desc
 	";
 	$exe = pg_query($sigpa, $sql);
 
@@ -46,16 +46,17 @@
 ?>
 
 					<tr>
+						<td><?= "$periodo->carrera - $periodo->sede ($periodo->estructura)"; ?></td>
+						<td><?= "$periodo->id <i class=\"fa fa-circle\" style=\"color:" . (($periodo->estado == "t") ? "green" : "red") . ";\" title=\"" . (($periodo->estado == "t") ? "Activo" : "Inactivo") . "\">"; ?></td>
 						<td><?php $fecha = explode("-", $periodo->fechaInicio); echo "$fecha[2]/$fecha[1]/$fecha[0]"; ?></td>
-						<td><?php $fecha = explode("-", $periodo->fechaFin); echo "$fecha[2]/$fecha[1]/$fecha[0]"; ?></td>
-						<td><?= $periodo->id; ?></td>
 						<td><div class="row">
 							<div class="col-xs-7 col-sm-7 col-md-6 col-lg-7">
-								<?= "$periodo->carrera - $periodo->sede ($periodo->estructura)"; ?>
+								<?php $fecha = explode("-", $periodo->fechaFin); echo "$fecha[2]/$fecha[1]/$fecha[0]"; ?>
 							</div>
 
 							<div class="col-xs-5 col-sm-5 col-md-6 col-lg-5 text-center">
 								<i class="fa fa-pencil fa-fw editar" title="Editar" onClick="embem('moduloPlanificacion/Periodo/editar.php', '#page-wrapper', 'id=<?= $periodo->id ?>&ecs=<?= $periodo->idECS ?>')"></i>
+								<i class="fa fa-forward fa-fw editar" title="Avanzar" onClick="embem('moduloPlanificacion/Periodo/avanzar.php', '#page-wrapper', 'id=<?= $periodo->id ?>&ecs=<?= $periodo->idECS ?>')"></i>
 								<i class="fa fa-trash-o fa-fw eliminar" onClick="if(confirm('¿Realmente desea eliminar <?= $periodo->id ?> de la carrera <?= "$periodo->carrera - $periodo->sede ($periodo->estructura)"; ?>?')) sendReq('moduloPlanificacion/Periodo/eliminar.php', 'id=<?= $periodo->id ?>&ecs=<?= $periodo->idECS ?>', 'moduloPlanificacion/Periodo/index.php')" title="Eliminar"></i>
 							</div>
 						</div></td>
@@ -77,16 +78,16 @@
 	</div>
 
 	<div class="col-lg-12">
-		<br/><h4>Académicos:</h4>
+		<br/><h4>Académicos:</h4><br/>
 
 		<div class="dataTable_wrapper">
 			<table class="table table-striped table-bordered table-hover dataTable">
 				<thead>
 					<tr>
+						<th>Carrera</th>
+						<th>ID</th>
 						<th>Fecha de inicio</th>
 						<th>Fecha de fin</th>
-						<th>ID</th>
-						<th>Carrera</th>
 					</tr>
 				</thead>
 
@@ -94,15 +95,15 @@
 
 <?php
 	$sql = "
-		select p.id as id, p.\"fechaInicio\" as \"fechaInicio\", p.\"fechaFin\" as \"fechaFin\", p.\"idECS\" \"idECS\", c.nombre as carrera, s.nombre as sede, e.nombre as estructura 
+		select p.id as id, p.\"fechaInicio\" as \"fechaInicio\", p.\"fechaFin\" as \"fechaFin\", p.\"idECS\" \"idECS\", c.nombre as carrera, s.nombre as sede, e.nombre as estructura, p.\"fechaFin\" >= current_date as estado 
 		from periodo as p 
 			join \"estructuraCS\" as ecs on ecs.id=p.\"idECS\" 
 			join estructura as e on e.id=ecs.\"idEstructura\" 
 			join \"carreraSede\" as cs on cs.id=ecs.\"idCS\" 
 			join carrera as c on c.id=cs.\"idCarrera\" 
 			join sede as s on s.id=cs.\"idSede\" 
-		where p.tipo='a' and p.\"fechaFin\">=current_date 
-		order by p.\"fechaInicio\" desc, p.\"fechaFin\" desc, p.id, c.nombre, s.nombre, e.nombre
+		where p.tipo='a'
+		order by c.nombre, s.nombre, e.nombre, p.id, p.\"fechaInicio\" desc, p.\"fechaFin\" desc
 	";
 	$exe = pg_query($sigpa, $sql);
 
@@ -110,10 +111,10 @@
 ?>
 
 					<tr>
+						<td><?= "$periodo->carrera - $periodo->sede ($periodo->estructura)"; ?></td>
+						<td><?= "$periodo->id <i class=\"fa fa-circle\" style=\"color:" . (($periodo->estado == "t") ? "green" : "red") . ";\" title=\"" . (($periodo->estado == "t") ? "Activo" : "Inactivo") . "\">"; ?></td>
 						<td><?php $fecha = explode("-", $periodo->fechaInicio); echo "$fecha[2]/$fecha[1]/$fecha[0]"; ?></td>
 						<td><?php $fecha = explode("-", $periodo->fechaFin); echo "$fecha[2]/$fecha[1]/$fecha[0]"; ?></td>
-						<td><?= $periodo->id; ?></td>
-						<td><?= "$periodo->carrera - $periodo->sede ($periodo->estructura)"; ?></td>
 					</tr>
 
 <?php

@@ -7,13 +7,26 @@
 	"data": [
 
 <?php
+	if($_SESSION["nivel"] < 3) {
+		$sql = "
+			select p.cedula as cedula, p.nombre as nombre, p.apellido as apellido, p.telefono as telefono, p.correo as correo, p.direccion as direccion, prof.categoria as categoria, prof.condicion as condicion, prof.dedicacion as dedicacion, prof.profesion as profesion 
+			from persona as p 
+				join profesor as prof on prof.cedula=p.cedula 
+			order by p.apellido, p.nombre, p.cedula
+		";
+	}
 
-	$sql = "
-		select p.cedula as cedula, p.nombre as nombre, p.apellido as apellido, p.telefono as telefono, p.correo as correo, p.direccion as direccion, prof.categoria as categoria, prof.condicion as condicion, prof.dedicacion as dedicacion, prof.profesion as profesion 
-		from persona as p 
-			join profesor as prof on prof.cedula=p.cedula 
-		order by p.apellido, p.nombre, p.cedula
-	";
+	else {
+		$sql = "
+			select p.cedula as cedula, p.nombre as nombre, p.apellido as apellido, p.telefono as telefono, p.correo as correo, p.direccion as direccion, prof.categoria as categoria, prof.condicion as condicion, prof.dedicacion as dedicacion, prof.profesion as profesion 
+			from persona as p 
+				join profesor as prof on prof.cedula=p.cedula 
+				join pertenece as per on per.\"idProfesor\" = prof.cedula
+			where per.\"idCS\" = (select id from \"carreraSede\" where \"idCarrera\" = '$_SESSION[carreraCoord]' and \"idSede\" = $_SESSION[sedeCoord])
+			order by p.apellido, p.nombre, p.cedula
+		";
+	}
+
 	$exe = pg_query($sigpa, $sql);
 
 	while($profesor = pg_fetch_object($exe)) {

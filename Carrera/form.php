@@ -41,22 +41,15 @@
 				<p class="help-block">En caso de que no exista el area que desea seleccionar, deberá registrarla <a href="javascript: embem('moduloPlanificacion/Area/form.html', '#page-wrapper')">aquí</a>.</p>
 			</div>
 
-			<div class="form-group"> 
-				Sede:
+			<div class="form-group">
+				<select name="coordinadorInst" class="form-control" onChange="noRepetido(this.value)">
+					<option value="">Coordinador Institucional</option>
 
 <?php
-	$sql="select id, nombre from estructura order by nombre";
-	$exe=pg_query($sigpa, $sql);
-
-	while($estructura = pg_fetch_object($exe))
-		$estructuras .= "<option value='$estructura->id'>$estructura->nombre</option>";
-
 	$sql="
 		select p.cedula as cedula, p.apellido as apellido, p.nombre as nombre 
 		from persona as p 
 			join profesor as prof on prof.cedula=p.cedula 
-			join condicion as con on con.id=prof.condicion
-		where con.id='3' 
 		order by p.apellido, p.nombre, p.cedula
 	";
 	$exe=pg_query($sigpa, $sql);
@@ -71,6 +64,24 @@
 
 		$profesores .= "<option value='$profesor->cedula'>$profesor->apellido $profesor->nombre ($profesor->cedula)</option>";
 	}
+
+	echo $profesores;
+?>
+
+				</select>
+
+				<p class="help-block">Opcional.</p>
+			</div>
+
+			<div class="form-group"> 
+				Sede:
+
+<?php
+	$sql="select id, nombre from estructura order by nombre";
+	$exe=pg_query($sigpa, $sql);
+
+	while($estructura = pg_fetch_object($exe))
+		$estructuras .= "<option value='$estructura->id'>$estructura->nombre</option>";
 
 	$sql="select id, nombre from sede order by nombre";
 	$exe=pg_query($sigpa, $sql);

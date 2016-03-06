@@ -111,11 +111,13 @@
 
 	$sede = $_POST["sede"];
 
+	$coordinadorInst = ($_POST["coordinadorInst"]) ? htmlspecialchars($_POST["coordinadorInst"], ENT_QUOTES) : "null";
+
 // --------------------
 
 	pg_query($sigpa, "begin");
 
-	$sql = "insert into carrera values('$id', '$nombre', '$area')";
+	$sql = "insert into carrera values('$id', '$nombre', '$area', $coordinadorInst)";
 	$exe = pg_query($sigpa, $sql);
 
 // Si se guardó la carrera correctamente
@@ -192,6 +194,17 @@
 
 	// --------------------
 
+		}
+
+		$sql = "update usuario set nivel = 4 where nivel = 3";
+		$exe = pg_query($sigpa, $sql);
+
+		$sql = "select \"idCoordinador\" as cedula from \"carreraSede\"";
+		$exe = pg_query($sigpa, $sql);
+
+		while($coordinador = pg_fetch_object($exe)) {
+			$sql = "update usuario set nivel = 3 where cedula = $coordinador->cedula";
+			$exe2 = pg_query($sigpa, $sql);
 		}
 
 		echo "Se guardó satisfactóriamente&&success";

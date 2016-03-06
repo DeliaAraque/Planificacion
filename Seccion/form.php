@@ -33,6 +33,19 @@
 				<label class="checkbox-inline"><input type="checkbox" name="grupos" value="1"> Dividir en grupos </label>
 			</div>
 
+<?php
+	if($_SESSION["nivel"] == 3) {
+?>
+
+			<input type="hidden" name="carrera" value="<?= $_SESSION["carreraCoord"]; ?>" />
+			<input type="hidden" name="sede" value="<?= $_SESSION["sedeCoord"]; ?>" />
+
+<?php
+	}
+
+	else {
+?>
+
 			<div class="form-group">
 				<select name="carrera" class="form-control" onChange="selectSede()" required="required">
 					<option value="">Carrera</option>
@@ -65,6 +78,10 @@
 				</select>
 				<p class="help-block">Antes de poder seleccionar algúna sede, debe elegir una carrera.</p>
 			</div>
+
+<?php
+	}
+?>
 
 			<div class="form-group">
 				<select name="periodo" class="form-control" onChange="selectMallas()" required="required">
@@ -150,4 +167,6 @@
 
 		embem('moduloPlanificacion/Seccion/periodosEstructura.php', periodoEstructura, "mecs=" + malla.value);
 	}
+
+	<?php if($_SESSION["nivel"] == 3) echo "selectPeriodos()"; ?>
 </script>

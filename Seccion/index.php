@@ -6,7 +6,7 @@
 	<div class="col-lg-12">
 		<h1 class="page-header">Secciones</h1>
 		<small class="help-block">Para ver secciones sin carga asignada haga click <a href="javascript: embem('moduloPlanificacion/Seccion/sincarga.php', '#page-wrapper')">aquí</a>.</small>
-		<small class="help-block">Para ver secciones de periodos antiguos haga click <a href="javascript: embem('moduloPlanificacion/Seccion/antigua.php', '#page-wrapper')">aquí</a>.</small>
+		<!-- <small class="help-block">Para ver secciones de periodos antiguos haga click <a href="javascript: embem('moduloPlanificacion/Seccion/antigua.php', '#page-wrapper')">aquí</a>.</small> -->
 	</div>
 </div>
 
@@ -16,8 +16,8 @@
 			<table class="table table-striped table-bordered table-hover dataTable">
 				<thead>
 					<tr>
-						<th>Periodo</th>
-						<th>Carrera</th>
+						<th>Periodo Académico</th>
+						<th><?= ($_SESSION["nivel"] == 3) ? "Periodo" : "Carrera"; ?></th>
 						<th>Sección</th>
 					</tr>
 				</thead>
@@ -30,11 +30,15 @@
 	$sql = "
 		select sec.\"ID\" as \"ID\", p.id as periodo, sec.id as id, sec.turno as turno, sec.grupos as grupos, c.nombre as carrera, s.nombre as sede, sec.\"periodoEstructura\" as \"periodoEstructura\", sec.\"idMECS\" as \"idMECS\" 
 		from seccion as sec 
-			join periodo as p on p.\"ID\"=sec.\"idPeriodo\" and p.\"fechaFin\">=current_date 
+			join periodo as p on p.\"ID\"=sec.\"idPeriodo\" 
 			join \"estructuraCS\" as ecs on ecs.id=p.\"idECS\" 
 			join \"carreraSede\" as cs on cs.id=ecs.\"idCS\" 
 			join carrera as c on c.id=cs.\"idCarrera\" 
 			join sede as s on s.id=cs.\"idSede\"
+	"
+	. (($_SESSION["nivel"] == 3) ? " where c.id ='$_SESSION[carreraCoord]' and s.id ='$_SESSION[sedeCoord]'" : "") .
+
+	"
 		order by p.id, c.nombre, s.nombre, sec.\"periodoEstructura\", sec.id
 	";
 	$exe = pg_query($sigpa, $sql);
@@ -52,7 +56,17 @@
 
 					<tr>
 						<td><?= $seccion->periodo; ?></td>
-						<td><?= "$seccion->carrera - $seccion->sede ($malla->id $seccion->periodoEstructura)"; ?></td>
+						<td>
+
+<?php
+		if($_SESSION["nivel"] < 3)
+			echo "$seccion->carrera - $seccion->sede ($malla->id $seccion->periodoEstructura)";
+
+		else
+			echo "$seccion->periodoEstructura ($malla->id)";
+?>
+
+						</td>
 						<td><div class="row">
 							<div class="col-xs-7 col-sm-7 col-md-6 col-lg-7">
 

@@ -53,6 +53,42 @@
 			</div>
 
 			<div class="form-group">
+				Coordinador Institucional:
+				<select name="coordinadorInst" class="form-control" onChange="noRepetido(this.value)">
+					<option value="">Coordinador Institucional:</option>
+
+<?php
+	$sql="
+		select p.cedula as cedula, p.apellido as apellido, p.nombre as nombre 
+		from persona as p 
+			join profesor as prof on prof.cedula=p.cedula 
+		order by p.apellido, p.nombre, p.cedula
+	";
+	$exe=pg_query($sigpa, $sql);
+
+	while($profesor = pg_fetch_object($exe)) {
+		$sql="select count(\"idCoordinador\") as n from \"carreraSede\" where \"idCoordinador\"='$profesor->cedula'";
+		$exe2=pg_query($sigpa, $sql);
+		$n = pg_fetch_object($exe2);
+
+		if($n->n)
+			continue;
+
+		echo "<option value='$profesor->cedula' ";
+
+		if($carrera->idCoordinadorInst == $profesor->cedula)
+			echo "selected=\"selected\"";
+
+		echo ">$profesor->apellido $profesor->nombre ($profesor->cedula)</option>";
+	}
+?>
+
+				</select>
+
+				<p class="help-block">Opcional.</p>
+			</div>
+
+			<div class="form-group">
 				<br/>Sede:
 
 <?php
@@ -114,8 +150,7 @@
 				from pertenece as per
 					join profesor as prof on prof.cedula=per.\"idProfesor\" 
 					join persona as p on p.cedula=prof.cedula 
-					join condicion as con on con.id=prof.condicion
-				where con.id='3' and per.\"idCS\"=(select id from \"carreraSede\" where \"idCarrera\"='$carrera->id' and \"idSede\"='$sede->id') 
+				where per.\"idCS\"=(select id from \"carreraSede\" where \"idCarrera\"='$carrera->id' and \"idSede\"='$sede->id') 
 				order by p.apellido, p.nombre, p.cedula
 			";
 		}
@@ -125,8 +160,6 @@
 				select p.cedula as cedula, p.apellido as apellido, p.nombre as nombre 
 				from persona as p 
 					join profesor as prof on prof.cedula=p.cedula 
-					join condicion as con on con.id=prof.condicion
-				where con.id='3' 
 				order by p.apellido, p.nombre, p.cedula
 			";
 		}

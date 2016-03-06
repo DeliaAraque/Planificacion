@@ -367,7 +367,7 @@
 			return false;
 		}
 
-		embem('moduloPlanificacion/Carga/horasDisponibles.php', horas, "profesor=" + profesor + "&periodo=<?= $periodo ?>");
+		embem('moduloPlanificacion/Carga/horasDisponibles.php', horas, "profesor=" + profesor + "&periodo=<?= $periodo ?>&mecs=<?= $mecs ?>");
 	}
 
 	function licenciaSabatica() {

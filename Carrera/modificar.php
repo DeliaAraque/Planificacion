@@ -114,11 +114,13 @@
 
 	$sede = $_POST["sede"];
 
+	$coordinadorInst = ($_POST["coordinadorInst"]) ? htmlspecialchars($_POST["coordinadorInst"], ENT_QUOTES) : "null";
+
 // --------------------
 
 	pg_query($sigpa, "begin");
 
-	$sql = "update carrera set id='$id', nombre='$nombre', \"idArea\"='$area' where id='$idAnt'";
+	$sql = "update carrera set id='$id', nombre='$nombre', \"idArea\"='$area', \"idCoordinadorInst\" = $coordinadorInst where id='$idAnt'";
 	$exe = pg_query($sigpa, $sql);
 
 // Si se modificó la carrera correctamente
@@ -251,6 +253,17 @@
 
 		$sql = "delete from \"carreraSede\" $whereCS";
 		$exe = pg_query($sigpa, $sql);
+
+		$sql = "update usuario set nivel = 4 where nivel = 3";
+		$exe = pg_query($sigpa, $sql);
+
+		$sql = "select \"idCoordinador\" as cedula from \"carreraSede\"";
+		$exe = pg_query($sigpa, $sql);
+
+		while($coordinador = pg_fetch_object($exe)) {
+			$sql = "update usuario set nivel = 3 where cedula = $coordinador->cedula";
+			$exe2 = pg_query($sigpa, $sql);
+		}
 
 		echo "Se modificó satisfactóriamente&&success";
 		pg_query($sigpa, "commit");

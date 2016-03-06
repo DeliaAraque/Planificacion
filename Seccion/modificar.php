@@ -130,7 +130,7 @@
 	$sql = "
 		select sec.\"ID\" as \"ID\", p.id as periodo, sec.id as id, sec.turno as turno, sec.multiplicador as multiplicador, sec.grupos as grupos, c.id as carrera, s.id as sede, e.id as estructura, sec.\"periodoEstructura\" as \"periodoEstructura\", sec.\"idMECS\" as malla 
 		from seccion as sec 
-			join periodo as p on p.\"ID\"=sec.\"idPeriodo\" and p.\"fechaFin\">=current_date 
+			join periodo as p on p.\"ID\"=sec.\"idPeriodo\" 
 			join \"estructuraCS\" as ecs on ecs.id=p.\"idECS\" 
 			join estructura as e on e.id=ecs.\"idEstructura\" 
 			join \"carreraSede\" as cs on cs.id=ecs.\"idCS\" 

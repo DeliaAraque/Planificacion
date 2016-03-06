@@ -5,7 +5,7 @@
 	$nombre = $_POST["nombre"];
 
 	$sql = "
-		select c.id as id, c.nombre as nombre, a.nombre as area 
+		select c.id as id, c.nombre as nombre, a.nombre as area, c.\"idCoordinadorInst\" as \"idCoordinadorInst\" 
 		from carrera as c 
 			join area as a on a.id=c.\"idArea\"
 		where c.nombre='$nombre'
@@ -25,6 +25,17 @@
 	<div class="col-xs-12">
 		<strong>Código:</strong> <?= $carrera->id; ?><br/>
 		<strong>Área:</strong> <?= $carrera->area; ?>
+
+<?php
+	if($carrera->idCoordinadorInst) {
+		$sql = "select cedula, nombre, apellido from persona where cedula='$carrera->idCoordinadorInst'";
+		$exe = pg_query($sigpa, $sql);
+		$coordinador = pg_fetch_object($exe);
+
+		echo "<br/><strong>Coordinador Institucional:</strong> $coordinador->apellido $coordinador->nombre ($coordinador->cedula)";
+	}
+?>
+
 	</div>
 
 	<div class="col-xs-12">

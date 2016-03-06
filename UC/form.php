@@ -1,5 +1,6 @@
 <?php
 	require "../../script/verifSesion.php";
+	require "../../lib/conexion.php";
 ?>
 
 <div class="row">
@@ -25,13 +26,23 @@
 				<label class="checkbox-inline"><input type="checkbox" name="renombrable" value="1"> Renombrable </label>
 			</div>
 
+<?php
+	if($_SESSION["nivel"] == 3) {
+?>
+
+			<input type="hidden" name="carrera" value="<?= $_SESSION["carreraCoord"]; ?>" />
+
+<?php
+	}
+
+	else {
+?>
+
 			<div class="form-group">
 				<select name="carrera" class="form-control" required="required">
 					<option value="">Carrera</option>
 
 <?php
-	require "../../lib/conexion.php";
-
 	$sql="select * from carrera order by nombre";
 	$exe=pg_query($sigpa, $sql);
 
@@ -42,6 +53,10 @@
 
 				</select>
 			</div>
+
+<?php
+	}
+?>
 
 			<div class="form-group">
 				<select name="eje" class="form-control" required="required">

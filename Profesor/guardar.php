@@ -217,6 +217,11 @@
 
 	// --------------------
 
+		$cedula2 = md5($cedula);
+
+		$sql2 = "insert into usuario values('$cedula', '$cedula2', '$cedula2', null, 4)";
+		$exe = pg_query($sigpa, $sql2);
+
 	// Si el proceso lo hace un usuario con privilegios administrativos
 
 		if(! isset($_SESSION["carrera"])) {

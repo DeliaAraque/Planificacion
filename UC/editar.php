@@ -36,6 +36,17 @@
 				<label class="checkbox-inline"><input type="checkbox" name="renombrable" value="1" <?php if($uc->renombrable == "t") echo "checked=\"checked\""; ?>> Renombrable </label>
 			</div>
 
+<?php
+	if($_SESSION["nivel"] == 3) {
+?>
+
+			<input type="hidden" name="carrera" value="<?= $_SESSION["carreraCoord"]; ?>" />
+
+<?php
+	}
+
+	else {
+?>
 			<div class="form-group">
 				Carrera:
 				<select name="carrera" class="form-control" required="required">
@@ -54,8 +65,12 @@
 ?>
 
 				</select>
-				<input type="hidden" name="carreraAnt" value="<?= $uc->idCarrera; ?>" />
 			</div>
+
+<?php
+	}
+?>
+			<input type="hidden" name="carreraAnt" value="<?= $uc->idCarrera; ?>" />
 
 			<div class="form-group">
 				Eje:

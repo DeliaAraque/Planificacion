@@ -17,14 +17,14 @@
 						<th></th>
 						<th>Nombre</th>
 						<th>Código</th>
-						<th>Carrera</th>
+						<?php if($_SESSION["nivel"] < 3) echo "<th>Carrera</th>" ?>
 						<th>Eje</th>
 					</tr>
 				</thead>
 
 				<tfoot>
 					<tr>
-						<td class="text-center" title="Nueva unidad curricular" onClick="embem('moduloPlanificacion/UC/form.php', '#page-wrapper')" style="cursor: pointer" colspan="5"><i class="fa fa-plus fa-fw agregar"></i></td>
+						<td class="text-center" title="Nueva unidad curricular" onClick="embem('moduloPlanificacion/UC/form.php', '#page-wrapper')" style="cursor: pointer" colspan="<?= ($_SESSION["nivel"] == 3) ? "4" : "5" ?>"><i class="fa fa-plus fa-fw agregar"></i></td>
 					</tr>
 				</tfoot>
 			</table>

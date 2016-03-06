@@ -15,7 +15,7 @@
 				<thead>
 					<tr>
 						<th>Periodo</th>
-						<th>Carrera</th>
+						<th><?= ($_SESSION["nivel"] == 3) ? "Periodo" : "Carrera"; ?></th>
 						<th>Sección</th>
 					</tr>
 				</thead>
@@ -33,6 +33,10 @@
 			join \"carreraSede\" as cs on cs.id=ecs.\"idCS\" 
 			join carrera as c on c.id=cs.\"idCarrera\" 
 			join sede as s on s.id=cs.\"idSede\"
+	"
+	. (($_SESSION["nivel"] == 3) ? " where c.id ='$_SESSION[carreraCoord]' and s.id ='$_SESSION[sedeCoord]'" : "") .
+
+	"
 		order by p.id, c.nombre, s.nombre, sec.\"periodoEstructura\", sec.id
 	";
 	$exe = pg_query($sigpa, $sql);
@@ -76,7 +80,17 @@
 
 					<tr>
 						<td><?= $seccion->periodo; ?></td>
-						<td><?= "$seccion->carrera - $seccion->sede ($malla->id $seccion->periodoEstructura)"; ?></td>
+						<td>
+
+<?php
+		if($_SESSION["nivel"] < 3)
+			echo "$seccion->carrera - $seccion->sede ($malla->id $seccion->periodoEstructura)";
+
+		else
+			echo "$seccion->periodoEstructura ($malla->id)";
+?>
+
+						</td>
 						<td>
 
 <?php

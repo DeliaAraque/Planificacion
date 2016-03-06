@@ -1,6 +1,11 @@
+<?php
+	require "../../script/verifSesion.php";
+?>
+
 <div class="row">
 	<div class="col-lg-12">
 		<h1 class="page-header">Planillas</h1>
+		<small class="help-block">Para modificar las firmas de las planillas haga click <a href="javascript: embem('moduloPlanificacion/Carga/firmas.php', '#page-wrapper')">aquí</a>.</small>
 	</div>
 </div>
 
@@ -32,7 +37,7 @@
 
 						<div class="col-xs-4 col-sm-3 col-md-3 col-lg-3 text-center">
 							<a href="/moduloPlanificacion/Carga/Planillas/<?= $archivos[$i]; ?>" target="_blank"><i class="fa fa-search fa-fw consultar" title="Previsualizar"></i></a>
-							<i class="fa fa-trash-o fa-fw eliminar" onClick="if(confirm('¿Realmente desea eliminar <?= $archivos[$i]; ?>?')) { sendReq('moduloPlanificacion/Carga/eliminarPlanilla.php', 'archivo=<?= $archivos[$i]; ?>'); embem('moduloPlanificacion/Carga/planillas.php', '#page-wrapper'); }" title="Eliminar"></i>
+							<?php if($_SESSION["nivel"] < 3) { ?> <i class="fa fa-trash-o fa-fw eliminar" onClick="if(confirm('¿Realmente desea eliminar <?= $archivos[$i]; ?>?')) { sendReq('moduloPlanificacion/Carga/eliminarPlanilla.php', 'archivo=<?= $archivos[$i]; ?>'); embem('moduloPlanificacion/Carga/planillas.php', '#page-wrapper'); }" title="Eliminar"></i> <?php } ?>
 						</div>
 					</div></td>
 				</tr>

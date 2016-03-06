@@ -15,6 +15,20 @@
 
 <div class="row">
 	<div class="col-lg-12">
+
+<?php
+	if($_SESSION["nivel"] == 3) {
+?>
+
+			<input type="hidden" id="carreraSelect" value="<?= $_SESSION["carreraCoord"]; ?>" />
+			<input type="hidden" id="sedeSelect" value="<?= $_SESSION["sedeCoord"]; ?>" />
+
+<?php
+	}
+
+	else {
+?>
+
 		<div class="form-group">
 			<select id="carreraSelect" class="form-control" onChange="selectSedes()" required="required">
 				<option value="">Carrera</option>
@@ -45,6 +59,10 @@
 			</select>
 			<p class="help-block">Antes de poder seleccionar algúna sede, debe elegir una carrera.</p>
 		</div>
+
+<?php
+	}
+?>
 
 		<div class="form-group">
 			<select id="periodoSelect" class="form-control" onChange="selectMallas()" required="required">
@@ -173,4 +191,6 @@
 		else
 			sendReq("moduloPlanificacion/Carga/generarPlanilla.php", "mecs=" + malla.value + "&periodo=" + periodo.value);
 	}
+
+	<?php if($_SESSION["nivel"] == 3) echo "selectPeriodos()"; ?>
 </script>
