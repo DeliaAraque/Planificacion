@@ -126,7 +126,7 @@ returning id
 
 	// --------------------
 
-		echo "Se eliminó satisfactóriamente&&success";
+		echo "Se eliminó satisfactoriamente&&success";
 		pg_query($sigpa, "commit");
 		exit;
 	}

@@ -13,7 +13,7 @@
 
 		// --------------------
 
-		echo "Se eliminó satisfactóriamente&&success";
+		echo "Se eliminó satisfactoriamente&&success";
 	}
 
 	else

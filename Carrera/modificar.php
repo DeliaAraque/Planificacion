@@ -265,7 +265,7 @@
 			$exe2 = pg_query($sigpa, $sql);
 		}
 
-		echo "Se modificó satisfactóriamente&&success";
+		echo "Se modificó satisfactoriamente&&success";
 		pg_query($sigpa, "commit");
 		exit;
 	}

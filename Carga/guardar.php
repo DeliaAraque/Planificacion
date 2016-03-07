@@ -172,6 +172,6 @@
 		++$n;
 	}
 
-	echo "Se asignó la carga satisfactóriamente&&success";
+	echo "Se asignó la carga satisfactoriamente&&success";
 	pg_query($sigpa, "commit");
 ?>

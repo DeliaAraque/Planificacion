@@ -207,7 +207,7 @@
 			$exe2 = pg_query($sigpa, $sql);
 		}
 
-		echo "Se guardó satisfactóriamente&&success";
+		echo "Se guardó satisfactoriamente&&success";
 		pg_query($sigpa, "commit");
 		exit;
 	}

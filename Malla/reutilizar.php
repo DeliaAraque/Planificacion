@@ -230,7 +230,7 @@
 
 	// --------------------
 
-		echo "Se guardó satisfactóriamente&&success";
+		echo "Se guardó satisfactoriamente&&success";
 		pg_query($sigpa, "commit");
 		exit;
 	}

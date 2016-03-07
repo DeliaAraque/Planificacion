@@ -198,7 +198,7 @@
 
 	// --------------------
 
-		echo "Se avanzó satisfactóriamente&&success";
+		echo "Se avanzó satisfactoriamente&&success";
 		pg_query($sigpa, "commit");
 
 		foreach ($borrar as $idCarga => $sql3) {

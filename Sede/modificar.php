@@ -78,7 +78,7 @@
 
 	// --------------------
 
-		echo "Se modificó satisfactóriamente&&success";
+		echo "Se modificó satisfactoriamente&&success";
 
 		pg_query($sigpa, "commit");
 		exit;

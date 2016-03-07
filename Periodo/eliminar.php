@@ -24,7 +24,7 @@
 		$sql = "insert into historial values('" . time() . "', '$_SESSION[nombre] $_SESSION[apellido] ($_SESSION[cedula])', 'Se eliminó <strong>$id</strong> de <strong>$ecs->carrera - $ecs->sede ($ecs->estructura)</strong>', '" . htmlspecialchars($sql, ENT_QUOTES) . "')";
 		$exe = pg_query($sigpa, $sql);
 
-		echo "Se eliminó satisfactóriamente&&success";
+		echo "Se eliminó satisfactoriamente&&success";
 	}
 
 	else {
