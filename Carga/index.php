@@ -9,6 +9,7 @@
 			Carga académica
 			<i id="planillaBtn" class="fa fa-file-pdf-o pull-right" title="Generar planilla" style="cursor: pointer;" onClick="planilla()"></i>
 			<i id="planillaBtn" class="fa fa-search pull-right" title="Previsualizar planilla" style="cursor: pointer;" onClick="planilla(true)"></i>
+			<i id="planillaBtn" class="fa fa-font pull-right" title="Ver secciones sin carga asignada" style="cursor: pointer;" onClick="moreInfo('moduloPlanificacion/Seccion/sincarga.php', 'popUp=1')"></i>
 		</h1>
 	</div>
 </div>

@@ -101,42 +101,6 @@
 		$exe2 = pg_query($sigpa, $sql);
 		$p = pg_fetch_object($exe2);
 
-		/* Calculo de horas
-
-		$sql = "
-			select ucm.\"horasTeoricas\" as ht, ucm.\"horasPracticas\" as hp, c.\"dividirHT\" as \"dividirHT\", s.multiplicador as multiplicador, s.grupos as grupos 
-			from carga as c 
-				join seccion as s on s.\"ID\"=c.\"idSeccion\" 
-				join periodo as p on p.\"ID\"=s.\"idPeriodo\" 
-				join \"mallaECS\" as mecs on mecs.id=s.\"idMECS\" 
-				join \"ucMalla\" as ucm on ucm.\"idMalla\"=mecs.\"idMalla\" and ucm.\"idUC\"=c.\"idUC\" and ucm.periodo=s.\"periodoEstructura\" 
-			where p.id='$periodo' and c.\"idProfesor\"='$p->cedula'
-		";
-
-		if($p->condicion != 3)
-			$sql .= " or c.\"idSuplente\"='$p->cedula'";
-
-		$exe2 = pg_query($sigpa, $sql);
-
-		$total = 0;
-
-		while($horas = pg_fetch_object($exe2)) {
-			$ht = $horas->ht * $horas->multiplicador;
-			$hp = $horas->hp * $horas->multiplicador;
-
-			if($horas->grupos == "t") {
-				$hp *= 2;
-
-				if($horas->dividirHT == "t")
-					$ht *= 2;
-			}
-
-			$total += $ht + $hp;
-		}
-
-		$options .= "<option value=\"$profesor->cedula\">$profesor->apellido $profesor->nombre ($profesor->cedula) - Horas disponibles: " . ($p->dedicacion - $total) . "</option>";
-		*/
-
 		$options .= "<option value=\"$profesor->cedula\">$profesor->apellido $profesor->nombre ($profesor->cedula)</option>";
 	}
 
@@ -161,7 +125,7 @@
 				<div class="col-xs-6">
 					<div class="form-group">
 						<label class="checkbox-inline">
-							<input type="checkbox" name="seccion[]" value="<?= $seccion->id; ?>" onClick="enableSec(this); grupos(this)"> <?= $seccion->id; ?> 
+							<input type="checkbox" name="seccion[]" id="id<?= $seccion->id; ?>" value="<?= $seccion->id; ?>" onClick="enableSec(this); grupos(this)"> <?= $seccion->id; ?> 
 
 <?php
 		if($uc->tipo == "t") {
@@ -184,6 +148,16 @@
 					<div id="sec<?= $seccion->id; ?>"></div>
 
 <?php
+		if($seccion->turno == "n") {
+?>
+
+					<div class="form-group">
+						<input type="text" name="horasComunes<?= $seccion->id; ?>" id="horasComunes<?= $seccion->id; ?>" placeholder="Horas comunes" class="form-control" pattern="^[1-9]$" maxlength="1" style="margin-top: 0.5em;" onChange="grupos(document.querySelector('#id<?= $seccion->id; ?>'))" disabled="disabled" />
+					</div>
+
+<?php
+		}
+
 		if($uc->tipo == "t") {
 			if($seccion->grupos == "t") {
 ?>
@@ -294,10 +268,12 @@
 
 		var suplenteSelect = $("#suplente" + seccion.value);
 		var dividirHT = $("#dividirHT" + seccion.value);
+		var horasComunes = $("#horasComunes" + seccion.value);
 
 		if(seccion.checked) {
 			suplenteSelect.removeAttr("disabled");
 			dividirHT.removeAttr("disabled");
+			horasComunes.removeAttr("disabled");
 		}
 
 		else {
@@ -305,6 +281,8 @@
 			$("#suplente" + seccion.value +" option:first-child").attr("selected", "selected");
 			dividirHT.attr("checked", false);
 			dividirHT.attr("disabled", "disabled");
+			horasComunes.val("");
+			horasComunes.attr("disabled", "disabled");
 		}
 	}
 
@@ -342,7 +320,14 @@
 
 		var horasAnt = $("#horas" + seccion.value).attr("value");
 
-		var horas = parseFloat(ht) + parseFloat(hp);
+		var horasComunes = $("#horasComunes" + seccion.value).attr("value");
+
+		if(! horasComunes)
+			horasComunes = 0;
+
+		var descuento = horasComunes * multiplicador;
+
+		var horas = parseFloat(ht) + parseFloat(hp) - descuento + parseFloat(horasComunes);
 		var horasDisponibles = $("#horasDisponibles").text();
 		$("#horasDisponibles").text(parseFloat(horasDisponibles) + parseFloat(horasAnt));
 

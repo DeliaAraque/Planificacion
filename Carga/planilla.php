@@ -54,7 +54,7 @@
 		$profesor = pg_fetch_object($exe);
 
 		$sql = "
-			select ucm.\"horasTeoricas\" as ht, ucm.\"horasPracticas\" as hp, c.\"dividirHT\" as \"dividirHT\", s.multiplicador as multiplicador, s.grupos as grupos, ucm.tipo as tipo 
+			select ucm.\"horasTeoricas\" as ht, ucm.\"horasPracticas\" as hp, c.\"dividirHT\" as \"dividirHT\", s.multiplicador as multiplicador, s.grupos as grupos, ucm.tipo as tipo, c.\"horasComunes\" as \"horasComunes\"  
 			from carga as c 
 				join seccion as s on s.\"ID\"=c.\"idSeccion\" 
 				join periodo as p on p.\"ID\"=s.\"idPeriodo\"
@@ -83,7 +83,8 @@
 				}
 			}
 
-			$total += $ht + $hp;
+			$descuento = $horas->horasComunes * $horas->multiplicador;
+			$total += $ht + $hp - $descuento + $horas->horasComunes;
 		}
 
 		return $profesor->dedicacion - $total;
@@ -619,9 +620,9 @@
 		foreach ($secciones as $seccion) {
 			$seccion = explode("&", $seccion);
 
-			$sql = "select \"dividirHT\" from carga where \"idProfesor\" = '$profesor' and \"idSeccion\" = '$seccion[4]' and \"idUC\" = '$carga->idUC'";
+			$sql = "select \"dividirHT\", \"horasComunes\" from carga where \"idProfesor\" = '$profesor' and \"idSeccion\" = '$seccion[4]' and \"idUC\" = '$carga->idUC'";
 			$exe = pg_query($sigpa, $sql);
-			$dividirHT = pg_fetch_object($exe);
+			$horasCarga = pg_fetch_object($exe);
 
 			$ht = $uc->ht * $seccion[2];
 			$hp = $uc->hp * $seccion[2];
@@ -630,7 +631,7 @@
 				if($seccion[3] == "t") {
 					$hp *= 2;
 
-					if($dividirHT->dividirHT == "t") {
+					if($horasCarga->dividirHT == "t") {
 						$ht *= 2;
 
 						$seccion[0] = $seccion[0] . "1-" . $seccion[0] . "2";
@@ -641,7 +642,8 @@
 				}
 			}
 
-			$total += $ht + $hp;
+			$descuento = $horasCarga->horasComunes * $seccion[2];
+			$total += $ht + $hp - $descuento + $horasCarga->horasComunes;
 
 			echo (($seccion[1] != "d") ? "*" : "") . "$seccion[0] <br/>";
 		}

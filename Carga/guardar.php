@@ -123,8 +123,9 @@
 		$seccionID = htmlspecialchars($_POST["ID$seccion"], ENT_QUOTES);
 		$dividirHT = (! isset($_POST["dividirHT$seccion"])) ? "false" : "true";
 		$suplente = ($_POST["suplente$seccion"]) ? $_POST["suplente$seccion"] : "null";
+		$horasComunes = (! isset($_POST["horasComunes$seccion"])) ? 0 : $_POST["horasComunes$seccion"];
 
-		$sql = "insert into carga values(default, $dividirHT, $nombre, '$profesor', '$seccionID', $suplente, '$unidadCurricular')";
+		$sql = "insert into carga values(default, $dividirHT, $nombre, '$profesor', '$seccionID', $suplente, '$unidadCurricular', $horasComunes)";
 		$exe = pg_query($sigpa, $sql);
 
 // Si ocurrio un error asignando la carga

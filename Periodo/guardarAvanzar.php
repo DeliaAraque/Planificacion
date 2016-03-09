@@ -162,7 +162,7 @@
 		while($seccion = pg_fetch_object($exe)) {
 			$siguienteSec = array_search($seccion->periodoEstructura, $periodosEstructura) + 1;
 
-			if(! array_key_exists($siguienteSec, $periodosEstructura)) {
+			if((! array_key_exists($siguienteSec, $periodosEstructura)) || ($seccion->id == "R")) {
 				$sql3 = "delete from seccion where \"ID\" = $seccion->ID";
 				$exe2 = pg_query($sigpa, $sql3);
 				continue;

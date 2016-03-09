@@ -14,7 +14,7 @@
 			<table class="table table-striped table-bordered table-hover dataTable">
 				<thead>
 					<tr>
-						<th>Periodo</th>
+						<th>Periodo Académico</th>
 						<th><?= ($_SESSION["nivel"] == 3) ? "Periodo" : "Carrera"; ?></th>
 						<th>Sección</th>
 					</tr>
@@ -116,8 +116,16 @@
 	</div>
 </div>
 
+<?php
+	if(! $_POST["popUp"]) {
+?>
+
 <div class="row">
 	<div class="col-xs-12 text-center">
 		<input type="button" value="Regresar" class="btn btn-lg" onClick="embem('moduloPlanificacion/Seccion/index.php', '#page-wrapper')" />
 	</div>
 </div>
+
+<?php
+	}
+?>

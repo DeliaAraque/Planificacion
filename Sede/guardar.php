@@ -38,7 +38,7 @@
 		exit;
 	}
 
-	$re = "^[0-9]{3,4}\-?[0-9]{7}$";
+	$re = "^[0-9]{3,4}\-?[0-9]{7}(,([0-9]{3,4}\-?[0-9]{7}))*$";
 
 	if(! ereg("$re", $_POST["telefono"])) {
 		echo "El número de teléfono no cumple con el patrón necesario";

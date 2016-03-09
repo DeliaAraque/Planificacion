@@ -49,7 +49,7 @@
 		$profesor = pg_fetch_object($exe);
 
 		$sql = "
-			select ucm.\"horasTeoricas\" as ht, ucm.\"horasPracticas\" as hp, c.\"dividirHT\" as \"dividirHT\", s.multiplicador as multiplicador, s.grupos as grupos, ucm.tipo as tipo 
+			select ucm.\"horasTeoricas\" as ht, ucm.\"horasPracticas\" as hp, c.\"dividirHT\" as \"dividirHT\", s.multiplicador as multiplicador, s.grupos as grupos, ucm.tipo as tipo, c.\"horasComunes\" as \"horasComunes\" 
 			from carga as c 
 				join seccion as s on s.\"ID\"=c.\"idSeccion\" 
 				join periodo as p on p.\"ID\"=s.\"idPeriodo\"
@@ -78,7 +78,8 @@
 				}
 			}
 
-			$total += $ht + $hp;
+			$descuento = $horas->horasComunes * $horas->multiplicador;
+			$total += $ht + $hp - $descuento + $horas->horasComunes;
 		}
 
 		return $profesor->dedicacion - $total;
