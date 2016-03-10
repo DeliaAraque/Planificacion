@@ -28,7 +28,7 @@
 	$sql = "
 		select sec.\"ID\" as \"ID\", p.id as periodo, sec.id as id, sec.turno as turno, sec.grupos as grupos, c.id as \"idCarrera\", c.nombre as carrera, s.nombre as sede, sec.\"periodoEstructura\" as \"periodoEstructura\", sec.\"idMECS\" as \"idMECS\" 
 		from seccion as sec 
-			join periodo as p on p.\"ID\"=sec.\"idPeriodo\" and p.\"fechaFin\">=current_date 
+			join periodo as p on p.\"ID\"=sec.\"idPeriodo\" 
 			join \"estructuraCS\" as ecs on ecs.id=p.\"idECS\" 
 			join \"carreraSede\" as cs on cs.id=ecs.\"idCS\" 
 			join carrera as c on c.id=cs.\"idCarrera\" 

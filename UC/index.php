@@ -22,11 +22,20 @@
 					</tr>
 				</thead>
 
+<?php
+	if($_SESSION["nivel"] < 3) {
+?>
+
 				<tfoot>
 					<tr>
 						<td class="text-center" title="Nueva unidad curricular" onClick="embem('moduloPlanificacion/UC/form.php', '#page-wrapper')" style="cursor: pointer" colspan="<?= ($_SESSION["nivel"] == 3) ? "4" : "5" ?>"><i class="fa fa-plus fa-fw agregar"></i></td>
 					</tr>
 				</tfoot>
+
+<?php
+	}
+?>
+
 			</table>
 		</div>
 	</div>
