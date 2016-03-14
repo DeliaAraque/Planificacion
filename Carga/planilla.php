@@ -5,7 +5,7 @@
 	$periodo = htmlspecialchars($_GET["periodo"], ENT_QUOTES);
 	$mecs = htmlspecialchars($_GET["mecs"], ENT_QUOTES);
 	$previsualizar = isset($_GET["previsualizar"]);
-	$limite = 4;
+	$limite = 3;
 
 	function horasDisponibles($profesor, $periodo, $ecs, $mecs) {
 		global $sigpa;
@@ -416,7 +416,7 @@
 		// Profesores
 
 		$sql = "
-			select prof.cedula as cedula, per.apellido as apellido, per.nombre as nombre, pro.nombre as profesion, prof.categoria as categoria, prof.dedicacion as dedicacion, ded.horas as horas, array_to_string(array_agg(car.\"idUC\"), '&') as cargas
+			select prof.cedula as cedula, per.apellido as apellido, per.nombre as nombre, pro.nombre as profesion, prof.categoria as categoria, prof.dedicacion as dedicacion, ded.horas as horas, string_agg(concat_ws('&', car.\"idUC\", sec.\"periodoEstructura\"), '&&') as cargas
 			from carga as car 
 				join profesor as prof on prof.cedula=car.\"idProfesor\" or prof.cedula=car.\"idSuplente\" 
 				join persona as per on per.cedula=prof.cedula 
@@ -435,7 +435,7 @@
 		$nProfesores = 1;
 
 		while($profesor = pg_fetch_object($exe)) {
-			$cargas = explode("&", $profesor->cargas);
+			$cargas = explode("&&", $profesor->cargas);
 			$cargas = array_unique($cargas);
 			$n = count($cargas);
 			$hd = horasDisponibles($profesor->cedula, $periodo->id, null, $mecs);
@@ -445,7 +445,7 @@
 			$sql = "
 				select uc.id as \"idUC\", uc.nombre as \"unidadCurricular\", car.\"nuevoNombre\" as \"nuevoNombre\", sec.\"periodoEstructura\" as \"periodoEstructura\", sec.\"idMECS\", string_agg(concat_ws('&', sec.id, sec.turno, sec.multiplicador, sec.grupos, sec.\"ID\"), '&&' order by sec.id) as secciones
 				from carga as car 
-					join seccion as sec on sec.\"ID\"=car.\"idSeccion\" and sec.\"idPeriodo\"='$periodo->ID' and sec.\"idMECS\"='$mecs'
+					join seccion as sec on sec.\"ID\"=car.\"idSeccion\"
 					join periodo as p on p.\"ID\"=sec.\"idPeriodo\" 
 					join \"estructuraCS\" as ecs on ecs.id=p.\"idECS\" 
 					join \"carreraSede\" as cs on cs.id=ecs.\"idCS\" 
@@ -454,7 +454,7 @@
 					join \"mallaECS\" as mecs on mecs.id=sec.\"idMECS\" 
 					join \"unidadCurricular\" as uc on uc.id=car.\"idUC\" 
 					join \"ucMalla\" as ucm on ucm.\"idUC\"=uc.id
-				where car.\"idProfesor\"='$profesor->cedula' or car.\"idSuplente\"='$profesor->cedula'
+				where (car.\"idProfesor\"='$profesor->cedula' or car.\"idSuplente\"='$profesor->cedula') and sec.\"idPeriodo\"='$periodo->ID' and sec.\"idMECS\"='$mecs'
 				group by uc.id, uc.nombre, car.\"nuevoNombre\", sec.\"periodoEstructura\", sec.\"idMECS\"
 				order by uc.nombre, sec.\"periodoEstructura\"
 			";
@@ -504,6 +504,76 @@
 				if($observacion->contenido)
 					echo "$observacion->contenido<br/>";
 			}
+
+			$sql = "
+				select car.\"idProfesor\" as profesor, car.\"idSuplente\" as suplente, sec.id as seccion, sec.\"periodoEstructura\" as \"periodoEstructura\", uc.nombre as \"unidadCurricular\", car.\"nuevoNombre\" as \"nuevoNombre\"
+				from carga as car 
+					join seccion as sec on sec.\"ID\"=car.\"idSeccion\" 
+					join periodo as p on p.\"ID\"=sec.\"idPeriodo\" 
+					join \"estructuraCS\" as ecs on ecs.id=p.\"idECS\" 
+					join \"carreraSede\" as cs on cs.id=ecs.\"idCS\" 
+					join carrera as c on c.id=cs.\"idCarrera\" 
+					join sede as s on s.id=cs.\"idSede\"
+					join \"mallaECS\" as mecs on mecs.id=sec.\"idMECS\" 
+					join \"unidadCurricular\" as uc on uc.id=car.\"idUC\" 
+				where (car.\"idProfesor\"='$profesor->cedula' or car.\"idSuplente\"='$profesor->cedula') and sec.\"idPeriodo\"='$periodo->ID' and sec.\"idMECS\"='$mecs'
+				order by uc.nombre, sec.\"periodoEstructura\", sec.id
+			";
+			$exe3 = pg_query($sigpa, $sql);
+
+			$suplenciaAnt = "";
+			$ucSuplenciaAnt = "";
+			$suplenteAnt = "";
+			$ucSuplenteAnt = "";
+
+			while($suplencia = pg_fetch_object($exe3)) {
+				if($suplencia->profesor != $profesor->cedula) {
+					$sql = "select apellido, nombre, cedula from persona where cedula='$suplencia->profesor'";
+					$exe4 = pg_query($sigpa, $sql);
+					$profesorCarga = pg_fetch_object($exe4);
+
+					if($suplenciaAnt != $profesorCarga->cedula) {
+						echo "<br/><b>Suplente de</b> $profesorCarga->apellido $profesorCarga->nombre en $suplencia->unidadCurricular ($suplencia->periodoEstructura) - $suplencia->seccion";
+						$suplenciaAnt = $profesorCarga->cedula;
+						$ucSuplenciaAnt = $carga->unidadCurricular;
+					}
+
+					else {
+						if($ucSuplenciaAnt != $suplencia->unidadCurricular) {
+							echo "; $suplencia->unidadCurricular ($suplencia->periodoEstructura) - $suplencia->seccion";
+							$ucSuplenciaAnt = $carga->unidadCurricular;
+						}
+
+						else 
+							echo ", $suplencia->seccion";
+					}
+				}
+
+				else if($suplencia->suplente) {
+					$sql = "select apellido, nombre, cedula from persona where cedula='$suplencia->suplente'";
+					$exe4 = pg_query($sigpa, $sql);
+					$suplente = pg_fetch_object($exe4);
+
+					if($suplenteAnt != $suplente->cedula) {
+						echo "<br/><b>Suple</b> $suplente->apellido $suplente->nombre en $suplencia->unidadCurricular ($suplencia->periodoEstructura) - $suplencia->seccion";
+						$suplenteAnt = $suplente->cedula;
+						$ucSuplenteAnt = $carga->unidadCurricular;
+					}
+
+					else {
+						if($ucSuplenteAnt != $suplencia->unidadCurricular) {
+							echo "; $suplencia->unidadCurricular ($suplencia->periodoEstructura) - $suplencia->seccion";
+							$ucSuplenteAnt = $carga->unidadCurricular;
+						}
+
+						else 
+							echo ", $suplencia->seccion";
+					}
+				}
+			}
+
+			if(($suplenteAnt) || ($suplenciaAnt))
+				echo "<br/>";
 ?>
 
 		<b>Total: <?= $profesor->horas . (($profesor->horas == 1) ? " hora" : " horas"); ?></b>
